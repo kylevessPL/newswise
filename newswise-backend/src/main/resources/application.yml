@@ -9,10 +9,10 @@ app:
         vocab: classpath:/models/vocab_dl.txt
         config: classpath:/models/config_dl.json
       me:
-        model: classpath:/models/model_opennlp.bin
+        model: classpath:/models/model_opennlp.7z
     corenlp:
-      model: classpath:/models/model_corenlp.ser.gz
-      counter: classpath:/models/counter_corenlp.ser.gz
+      model: classpath:/models/model_corenlp.7z
+      counter: classpath:/models/counter_corenlp.7z
       feature-weight-threshold: 0.25
     weka:
       model: classpath:/models/model_weka.7z

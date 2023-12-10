@@ -2,21 +2,25 @@ package pl.piasta.newswise.classification.corenlp
 
 import edu.stanford.nlp.classify.ColumnDataClassifier
 import edu.stanford.nlp.classify.Dataset
-import edu.stanford.nlp.io.IOUtils
 import edu.stanford.nlp.ling.Datum
 import edu.stanford.nlp.ling.RVFDatum
 import edu.stanford.nlp.stats.Counter
 import edu.stanford.nlp.util.ErasureUtils
+import java.io.File
 import kotlin.math.exp
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import pl.piasta.newswise.common.asObjectInputStream
+import pl.piasta.newswise.common.sevenZipSingleStream
 
 object CoreNLPHelper {
-    fun readClassifier(path: String): ColumnDataClassifier = ColumnDataClassifier.getClassifier(path)
+    fun readClassifier(model: File): ColumnDataClassifier = model.sevenZipSingleStream()?.asObjectInputStream().use {
+        ColumnDataClassifier.getClassifier(it)
+    }
 
-    fun readFeatureCounter(path: String): Counter<String> = IOUtils.readStreamFromString(path).use {
-        ErasureUtils.uncheckedCast(it.readObject())
+    fun readFeatureCounter(counter: File): Counter<String> = counter.sevenZipSingleStream()?.asObjectInputStream().use {
+        ErasureUtils.uncheckedCast(it?.readObject())
     }
 
     fun softmax(logits: Collection<Double>): Collection<Double> {

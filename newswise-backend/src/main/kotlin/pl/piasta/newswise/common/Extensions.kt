@@ -8,6 +8,7 @@ import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
+import java.io.ObjectInputStream
 import java.net.URI
 import java.net.URL
 import java.nio.file.DirectoryNotEmptyException
@@ -26,6 +27,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import org.apache.commons.compress.archivers.sevenz.SevenZFile
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.tika.Tika
@@ -157,6 +159,24 @@ fun String.toUri() = URI(this)
 inline fun <reified E : Enum<E>> fromString(value: String, uppercase: Boolean = true): E {
     val name = if (uppercase) value.uppercase() else value
     return enumValueOf(name)
+}
+
+/**
+ * Create an [ObjectInputStream] from the [InputStream].
+ *
+ * @return An [ObjectInputStream] created from the [InputStream].
+ */
+fun InputStream.asObjectInputStream() = ObjectInputStream(this)
+
+/**
+ * Extract an [InputStream] of a first entry of a 7-Zip archive file.
+ *
+ * @return An [InputStream] representing the contents of the first entry in the 7-Zip archive,
+ *         or null if the archive is empty or cannot be read.
+ */
+fun File.sevenZipSingleStream(): InputStream? {
+    val zipFile = SevenZFile(this)
+    return zipFile.nextEntry.let { zipFile.getInputStream(it) }
 }
 
 /**

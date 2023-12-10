@@ -1,7 +1,7 @@
 package pl.piasta.newswise.classification.weka
 
 import java.io.File
-import org.apache.commons.compress.archivers.sevenz.SevenZFile
+import pl.piasta.newswise.common.sevenZipSingleStream
 import weka.classifiers.meta.FilteredClassifier
 import weka.core.Attribute
 import weka.core.DenseInstance
@@ -13,9 +13,8 @@ private const val CLASS_ATTRIBUTE = "class-att"
 private const val TEXT_ATTRIBUTE = "text-att"
 
 object WekaHelper {
-    fun readClassifier(model: File) = SevenZFile(model).use {
-        val stream = it.getInputStream(it.nextEntry)
-        SerializationHelper.read(stream) as FilteredClassifier
+    fun readClassifier(model: File) = model.sevenZipSingleStream().use {
+        SerializationHelper.read(it) as FilteredClassifier
     }
 
     fun createAttributes(classes: List<String>): ArrayList<Attribute> {
