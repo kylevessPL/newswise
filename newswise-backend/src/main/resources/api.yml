@@ -1,0 +1,100 @@
+openapi: 3.0.3
+info:
+  title: NewsWise API
+  version: 1.0.0
+paths:
+  /processing/{model}/files:
+    post:
+      operationId: processFiles
+      summary: Process file documents
+      parameters:
+        - in: path
+          name: model
+          required: true
+          description: Categorizer model
+          schema:
+            $ref: '#/components/schemas/CategorizerModel'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                additionalProperties:
+                  type: string
+                  format: binary
+      responses:
+        200:
+          description: Successfully processed file documents
+          content:
+            text/event-stream:
+              schema:
+                $ref: '#/components/schemas/DocumentProcessingResultDto'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /processing/{model}/remote:
+    get:
+      operationId: processRemote
+      summary: Process remote URL document
+      parameters:
+        - in: path
+          name: model
+          required: true
+          description: Categorizer model
+          schema:
+            $ref: '#/components/schemas/CategorizerModel'
+        - name: url
+          in: query
+          description: The URL of the document to process
+          required: true
+          schema:
+            type: string
+            format: uri
+      responses:
+        200:
+          description: Successfully processed remote URL document
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentProcessingResultDto'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    CategorizerModel:
+      type: string
+      enum:
+        - bert
+        - opennlp
+        - corenlp
+        - weka
+    DocumentProcessingResultDto:
+      type: object
+      properties:
+        resource:
+          type: string
+        result:
+          type: object
+          properties:
+            content:
+              type: string
+            metadata:
+              type: object
+              additionalProperties: true
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+        messages:
+          type: array
+          items:
+            type: string

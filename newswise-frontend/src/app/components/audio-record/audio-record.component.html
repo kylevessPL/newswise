@@ -1,0 +1,11 @@
+<ng-container *ngIf="recording; else notRecording">
+    <button mat-fab color="accent" [disabled]="stopDisabled" (click)="stopRecording()">
+        <mat-icon>crop_square</mat-icon>
+    </button>
+</ng-container>
+
+<ng-template #notRecording>
+    <button mat-fab color="warn" (click)="startRecording()">
+        <mat-icon>mic</mat-icon>
+    </button>
+</ng-template>

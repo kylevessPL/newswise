@@ -1,0 +1,30 @@
+.analysis-result-dialog-header {
+  position: absolute;
+  content: '';
+  top: 0;
+  right: 50%;
+  transform: translate(50%, -50%);
+  width: 50px;
+  height: 50px;
+}
+
+.analysis-result-dialog-title {
+  margin-top: 12px;
+}
+
+.analysis-result-dialog-content {
+  padding-bottom: 8px;
+}
+
+.analysis-result-risk {
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+.positive-disease-label {
+  color: #e53935;
+}
+
+.negative-disease-label {
+  color: #21a054;
+}

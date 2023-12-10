@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" shape-rendering="geometricPrecision"
+     text-rendering="geometricPrecision">
+    <circle r="16" transform="translate(18 18)" fill="#f44336"/>
+    <path
+            d="M18 2c8.837 0 16 7.163 16 16s-7.163 16-16 16S2 26.837 2 18 9.163 2 18 2m0-2C8.611 0 0 8.611 0 18s8.611 18 18 18 18-8.611 18-18S27.389 0 18 0Z"
+            fill="#fff"/>
+    <circle r="2" transform="translate(11.5 14.88)" fill="#fff"/>
+    <circle r="2" transform="translate(24.5 14.88)" fill="#fff"/>
+    <path d="M23.63 25.43a8.36 8.36 0 0 0-11.26 0L11 24a10.35 10.35 0 0 1 14 0Z" fill="#fff"/>
+</svg>

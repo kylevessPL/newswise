@@ -1,0 +1,18 @@
+<header>
+    <form [formGroup]="form">
+        <mat-form-field class="language-select">
+            <mat-select formControlName="language"
+                        [placeholder]="'language' | translate"
+                        (selectionChange)="onLanguageChange($event.value)">
+                <mat-select-trigger class="language-select-trigger disable-select">
+                    <mat-icon [svgIcon]="currentLanguage.code"></mat-icon>
+                    {{ currentLanguage.localizedName }}
+                </mat-select-trigger>
+                <mat-option *ngFor="let language of languages" [value]="language">
+                    <mat-icon [svgIcon]="language.code"></mat-icon>
+                    {{ language.localizedName }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </form>
+</header>

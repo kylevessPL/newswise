@@ -1,0 +1,34 @@
+header {
+  overflow: hidden;
+  position: relative;
+  height: 200px;
+
+  > ::before {
+    content: '';
+    position: absolute;
+    background-image: url('/assets/images/logo.svg');
+    background-size: contain;
+    margin: 15px;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-repeat: no-repeat;
+    background-position: 50%;
+  }
+}
+
+.language-select-trigger {
+  color: white;
+
+  .mat-icon {
+    vertical-align: top;
+    margin-right: 16px;
+  }
+}
+
+.language-select {
+  display: block;
+  float: right;
+  padding: 16px
+}

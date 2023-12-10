@@ -1,0 +1,66 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-section {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+}
+
+.main-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+@media screen and (min-width: 536px) {
+  .main-card {
+    min-width: 500px;
+  }
+}
+
+.card-item-flex {
+  display: inline-flex;
+  justify-content: center;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.file-upload {
+  width: 350px;
+}
+
+.card-item-block {
+  display: block;
+  margin-bottom: 15px;
+}
+
+.lungs-animation {
+  margin-top: 15px;
+}
+
+.export-container {
+  position: sticky;
+  align-self: flex-end;
+  height: 0;
+}
+
+.export-container-no-scroll {
+  display: flex;
+  flex-grow: 1;
+  align-items: flex-end;
+}
+
+.export-container-scroll {
+  bottom: 64px;
+}
+
+.export-button {
+  height: 48px;
+}

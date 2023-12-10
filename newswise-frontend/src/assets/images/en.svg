@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30" shape-rendering="geometricPrecision"
+     text-rendering="geometricPrecision">
+    <g clip-path="url(#a)">
+        <path d="M0 0v30h60V0Z" fill="#012169"/>
+        <path d="m0 0 60 30m0-30L0 30" stroke="#fff" stroke-width="6"/>
+        <g clip-path="url(#b)">
+            <path d="m0 0 60 30m0-30L0 30" stroke="#c8102e" stroke-width="4"/>
+            <clipPath id="b">
+                <path d="M30 15h30v15Zm0 0v15H0Zm0 0H0V0Zm0 0V0h30Z"/>
+            </clipPath>
+        </g>
+        <path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/>
+        <path d="M30 0v30M0 15h60" stroke="#c8102e" stroke-width="6"/>
+        <clipPath id="a">
+            <path d="M0 0v30h60V0Z"/>
+        </clipPath>
+    </g>
+</svg>

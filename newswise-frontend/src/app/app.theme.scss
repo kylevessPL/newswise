@@ -1,0 +1,22 @@
+@use '@angular/material' as mat;
+@use 'sass:map';
+@use 'src/app/components/header/header.theme';
+@use 'src/app/components/footer/footer.theme';
+@use 'src/app/components/preliminary-study-dialog/preliminary-study-dialog.theme';
+
+@mixin theme($theme) {
+  $background: map.get($theme, background);
+  $foreground: map.get($theme, foreground);
+
+  body {
+    background: mat.get-color-from-palette($background, background);
+  }
+
+  .main-section {
+    color: mat.get-color-from-palette($foreground, secondary-text);
+  }
+
+  @include header.theme($theme);
+  @include footer.theme($theme);
+  @include preliminary-study-dialog.theme($theme);
+}

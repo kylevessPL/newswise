@@ -1,0 +1,24 @@
+<h1 class="analysis-export-dialog-title" mat-dialog-title translate="data-export" [align]="'center'"></h1>
+<div class="analysis-export-dialog-content" mat-dialog-content [align]="'center'">
+    <form [formGroup]="form">
+        <mat-form-field floatLabel="always">
+            <mat-label translate="export-period"></mat-label>
+            <mat-select formControlName="period" [placeholder]="'loading' | translate">
+                <mat-option *ngFor="let period of periods | async" [value]="period">
+                    {{
+                        (
+                            period.key | lowercase | translate: {default: period.label})
+                    }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </form>
+</div>
+<div mat-dialog-actions [align]="'center'">
+    <button mat-flat-button
+            color="warn"
+            translate="export-action"
+            [disabled]="!form.controls['period'].value"
+            [mat-dialog-close]="form.controls['period'].value"></button>
+    <button mat-flat-button translate="close-action" [mat-dialog-close]="undefined"></button>
+</div>

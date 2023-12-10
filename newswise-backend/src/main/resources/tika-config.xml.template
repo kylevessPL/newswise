@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+    <parsers>
+        <parser class="org.apache.tika.parser.DefaultParser"/>
+        <parser class="org.apache.tika.parser.ocr.TesseractOCRParser">
+            <params>
+                <param name="tesseractPath" type="string">${tesseract.library}</param>
+                <param name="tessdataPath" type="string">${tesseract.data}</param>
+            </params>
+        </parser>
+    </parsers>
+</properties>

@@ -1,0 +1,17 @@
+footer {
+  font-size: 12px;
+  align-items: center;
+  display: flex;
+  padding: 25px;
+}
+
+.footer-copyright {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+
+  > span {
+    display: flex;
+    align-self: flex-end;
+  }
+}

@@ -1,0 +1,6 @@
+# noinspection SpringBootApplicationYaml
+app:
+  config:
+    cors:
+      allowed-origins:
+        - "http://localhost:${server.port}"

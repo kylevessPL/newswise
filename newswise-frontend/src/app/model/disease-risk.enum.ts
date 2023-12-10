@@ -1,0 +1,7 @@
+export enum DiseaseRisk {
+    'LOW-RISK' = 'LOW_RISK',
+    'MEDIUM-LOW-RISK' = 'MEDIUM_LOW_RISK',
+    'MEDIUM-RISK' = 'MEDIUM_RISK',
+    'MEDIUM-HIGH-RISK' = 'MEDIUM_HIGH_RISK',
+    'HIGH-RISK' = 'HIGH_RISK'
+}

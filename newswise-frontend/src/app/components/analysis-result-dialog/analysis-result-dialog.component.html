@@ -1,0 +1,21 @@
+<div class="analysis-result-dialog-header" [ngStyle]="{background: 'url(' + headerIcon + ') no-repeat'}"></div>
+<h1 class="analysis-result-dialog-title" mat-dialog-title translate="analysis-result" [align]="'center'"></h1>
+<div class="analysis-result-dialog-content" mat-dialog-content [align]="'center'">
+    <img [ngSrc]="medicalRecordIcon" [width]="60.97" [height]="90" loading="eager" draggable="false"
+         [alt]="'medical-card' | translate">
+    <p translate="test-result-is"></p>
+    <strong [ngClass]="data.disease ? 'positive-disease-label' : 'negative-disease-label'">{{
+            (
+                data.disease ? 'positive' : 'negative') | translate
+        }}</strong>
+    <p>{{ 'disease-probability' | translate }}:
+        <strong>{{ data.probability }}%</strong>
+    </p>
+    <p class="analysis-result-risk">
+        <strong>{{ riskLevel | lowercase | translate }}:</strong>
+        {{ riskLevel + '-message' | lowercase | translate }}
+    </p>
+</div>
+<div mat-dialog-actions [align]="'center'">
+    <button mat-button [mat-dialog-close]="true">OK</button>
+</div>

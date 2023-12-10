@@ -1,0 +1,4 @@
+cleantext==1.1.4
+contractions==0.1.73
+nltk==3.8.1
+trafilatura==1.6.2

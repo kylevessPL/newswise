@@ -1,0 +1,14 @@
+.text-divider {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.text-divider-line {
+  flex: 1;
+}
+
+.text-divider-text {
+  padding-left: 10px;
+  padding-right: 10px;
+}
