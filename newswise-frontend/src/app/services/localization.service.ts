@@ -21,11 +21,10 @@ export class LocalizationService {
 
     setLanguage(language: Language) {
         if (!this.translateService.langs.includes(language.code)) {
-            throw new Error(`Language ${language} is not supported!`);
+            throw new Error(`Language '${language.localizedName}' is not supported!`);
         }
         this.translateService.use(language.code);
     }
 
-    translate = (key: string, params?: { [key: string]: any }): Promise<string> =>
-        firstValueFrom(this.translateService.get(key, params));
+    translate = (key: string, params?: { [key: string]: any }) => firstValueFrom(this.translateService.get(key, params));
 }

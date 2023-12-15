@@ -2,7 +2,6 @@
 @use 'sass:map';
 @use 'src/app/components/header/header.theme';
 @use 'src/app/components/footer/footer.theme';
-@use 'src/app/components/preliminary-study-dialog/preliminary-study-dialog.theme';
 
 @mixin theme($theme) {
   $background: map.get($theme, background);
@@ -18,5 +17,4 @@
 
   @include header.theme($theme);
   @include footer.theme($theme);
-  @include preliminary-study-dialog.theme($theme);
 }

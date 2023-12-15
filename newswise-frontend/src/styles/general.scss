@@ -13,3 +13,16 @@ body {
   -ms-user-select: none;
   user-select: none;
 }
+
+.mat-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+@media screen and (min-width: 536px) {
+  .mat-card {
+    min-width: 500px;
+  }
+}

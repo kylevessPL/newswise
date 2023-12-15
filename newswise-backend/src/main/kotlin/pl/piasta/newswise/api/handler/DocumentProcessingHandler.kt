@@ -34,8 +34,8 @@ class DocumentProcessingHandler(private val documentProcessor: DocumentProcessor
 
     suspend fun handleDocumentFilesProcessing(request: ServerRequest) = request.validateAndAwait {
         val events = filePartFlow()
-            .map { it.transferToTempDirectory(PROCESSING_FILES_PATH) }
-            .concurrentMap { it.process(model) }
+            .map { it.name() to it.transferToTempDirectory(PROCESSING_FILES_PATH) }
+            .concurrentMap { model.process(it.first, it.second) }
             .asServerSentEvents()
         ok().sse().bodyAndAwait(events)
     }
@@ -43,12 +43,12 @@ class DocumentProcessingHandler(private val documentProcessor: DocumentProcessor
     suspend fun handleRemoteDocumentProcessing(request: ServerRequest) = request.validateAndAwait {
         val url = request.queryParamOrNull(QUERY_URL).validateUrlAndGet()
         val result = coroutineScope {
-            async { url.process(model) }
+            async { model.process(url) }
         }
         try {
             ok().json().bodyValueAndAwait(result.await())
         } catch (ex: DocumentProcessingException) {
-            badRequest().json().bodyValueAndAwait(ex.message)
+            badRequest().json().bodyValueAndAwait(ex.message!!)
         }
     }
 
@@ -58,11 +58,11 @@ class DocumentProcessingHandler(private val documentProcessor: DocumentProcessor
         throw ServerWebInputException("Parameter $QUERY_URL is not valid")
     }
 
-    private suspend fun File.process(model: CategorizerModel) = try {
-        documentProcessor.process(this, model)
+    private suspend fun CategorizerModel.process(name: String, file: File) = try {
+        documentProcessor.process(name, file, this)
     } finally {
-        deleteIfExists()
+        file.deleteIfExists()
     }
 
-    private suspend fun URL.process(model: CategorizerModel) = documentProcessor.process(this, model)
+    private suspend fun CategorizerModel.process(url: URL) = documentProcessor.process(url, this)
 }

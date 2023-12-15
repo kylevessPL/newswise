@@ -11,8 +11,6 @@ export class IconsService {
     initialize = async () => this.setupIcons();
 
     private setupIcons() {
-        this.iconRegistry
-            .addSvgIcon('excel', this.sanitizer.bypassSecurityTrustResourceUrl(`${IMAGES_DIR}/excel.svg`))
-            .addSvgIcon('en', this.sanitizer.bypassSecurityTrustResourceUrl(`${IMAGES_DIR}/en.svg`));
+        this.iconRegistry.addSvgIcon('en', this.sanitizer.bypassSecurityTrustResourceUrl(`${IMAGES_DIR}/en.svg`));
     }
 }

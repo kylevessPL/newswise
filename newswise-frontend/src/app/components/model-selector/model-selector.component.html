@@ -1,0 +1,7 @@
+<mat-chip-listbox [attr.aria-label]="'select-model' | translate">
+    <mat-chip-option *ngFor="let value of modelValues; let i = index"
+                     (selectionChange)="modelSelected(value)"
+                     [selected]="i === 0">
+        {{ value | translate }}
+    </mat-chip-option>
+</mat-chip-listbox>

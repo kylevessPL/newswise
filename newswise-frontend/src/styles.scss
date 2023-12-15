@@ -19,14 +19,6 @@ $theme: mat.define-light-theme((
 @include mat.all-component-themes($theme);
 @include app.theme($theme);
 
-.analysis-result-dialog {
-  position: relative !important;
-
-  .mat-mdc-dialog-surface {
-    overflow: unset;
-  }
-}
-
 .language-select {
   .mat-mdc-select-arrow {
     color: white;
@@ -34,33 +26,5 @@ $theme: mat.define-light-theme((
 
   .mdc-notched-outline > * {
     border-color: white !important;
-  }
-}
-
-.analysis-export-dialog {
-  .mat-mdc-form-field-subscript-wrapper {
-    display: none;
-  }
-
-  .mdc-dialog__title + .mdc-dialog__content, .mdc-dialog__header + .mdc-dialog__content {
-    padding-top: 8px;
-  }
-}
-
-.preliminary-study-dialog {
-  #sv-nav-next, #sv-nav-complete {
-    margin-left: auto;
-  }
-
-  .sd-btn, .sd-question__erbox {
-    font-weight: unset;
-  }
-
-  .sd-question {
-    height: 316px;
-  }
-
-  .sd-container-modern {
-    margin-bottom: unset;
   }
 }

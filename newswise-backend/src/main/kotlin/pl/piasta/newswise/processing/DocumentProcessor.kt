@@ -6,12 +6,11 @@ import kotlinx.coroutines.coroutineScope
 import pl.piasta.newswise.common.contentType
 import pl.piasta.newswise.common.log
 import pl.piasta.newswise.extraction.DocumentExtractor
-import pl.piasta.newswise.extraction.ExtractedDocument
 import pl.piasta.newswise.processing.DocumentProcessingException.UnsupportedDocumentTypeException
 
 interface DocumentProcessor {
     suspend fun process(url: URL, categorizer: CategorizerModel): RemoteDocumentProcessingResultDto
-    suspend fun process(file: File, categorizer: CategorizerModel): FileDocumentProcessingResultDto
+    suspend fun process(name: String, file: File, categorizer: CategorizerModel): FileDocumentProcessingResultDto
 }
 
 class DocumentProcessingService(
@@ -24,17 +23,17 @@ class DocumentProcessingService(
     }
 
     override suspend fun process(url: URL, categorizer: CategorizerModel): RemoteDocumentProcessingResultDto {
-        val (document, category) = url.processDocument(categorizer)
-        return RemoteDocumentProcessingResultDto(document, category)
+        val (metadata, category) = url.processDocument(categorizer)
+        return RemoteDocumentProcessingResultDto(metadata, category)
     }
 
-    override suspend fun process(file: File, categorizer: CategorizerModel) = runCatching {
+    override suspend fun process(name: String, file: File, categorizer: CategorizerModel) = runCatching {
         if (file.contentType !in processingProperties.contentTypes) throw UnsupportedDocumentTypeException()
-        val (document, category) = file.toURI().toURL().processDocument(categorizer)
-        FileDocumentProcessingResultDto.Success(file, document, category)
+        val (metadata, category) = file.toURI().toURL().processDocument(categorizer)
+        FileDocumentProcessingResultDto.Success(name, metadata, category)
     }.getOrElse {
         when (it) {
-            is DocumentProcessingException -> FileDocumentProcessingResultDto.Failure(file, it)
+            is DocumentProcessingException -> FileDocumentProcessingResultDto.Failure(name, it)
             else -> throw it
         }
     }
@@ -42,15 +41,11 @@ class DocumentProcessingService(
     private suspend fun URL.processDocument(categorizer: CategorizerModel) = coroutineScope {
         runCatching {
             val document = documentExtractor.extract(this@processDocument)
-            val category = categorizer.categorizeDocument(document)
-            document to category
+            val category = documentCategorizationManager.categorize(document.content, categorizer)
+            document.metadata to category
         }.getOrElse {
             logger.warn("Document processing error", it)
             throw it
         }
     }
-
-    private suspend fun CategorizerModel.categorizeDocument(document: ExtractedDocument) = documentCategorizationManager
-        .categorize(document.content, this)
-        .mapKeys { it.key.category }
 }

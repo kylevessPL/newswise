@@ -6,13 +6,13 @@ import {Language} from '../../model/language.enum';
 @Component({
     selector: 'app-header',
     templateUrl: './header.component.html',
-    styleUrls: ['./header.component.scss']
+    styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
-    readonly languages = this.localizationService.getSupportedLanguages();
-    currentLanguage = this.localizationService.getLanguage();
+    protected readonly languages = this.localizationService.getSupportedLanguages();
+    protected currentLanguage = this.localizationService.getLanguage();
 
-    form: FormGroup;
+    protected form: FormGroup;
 
     constructor(private localizationService: LocalizationService, private formBuilder: FormBuilder) {
         this.form = this.formBuilder.group({
@@ -20,8 +20,8 @@ export class HeaderComponent {
         });
     }
 
-    onLanguageChange(language: Language) {
+    protected onLanguageChange = (language: Language) => {
         this.currentLanguage = language;
         this.localizationService.setLanguage(language);
-    }
+    };
 }

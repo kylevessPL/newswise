@@ -1,163 +1,118 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MAX_AUDIO_DURATION, MAX_FILE_SIZE_KB, MIN_AUDIO_DURATION} from './commons/app.constants';
+import {ACCEPTED_MIME_TYPES, MAX_FILE_COUNT, MAX_FILE_SIZE_MB} from './commons/app.constants';
 import {FileUploadError} from './model/file-upload.error';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import UnitUtil from './utils/unit.util';
-import {AudioRecordError} from './model/audio-record.error';
-import {MimeType} from './model/mime-type.enum';
 import {Animations} from './commons/app.animations';
-import {MatDialog} from '@angular/material/dialog';
-import {AnalysisResultData} from './model/analysis-result.data';
-import {AnalysisResultDialogComponent} from './components/analysis-result-dialog/analysis-result-dialog.component';
-import {AnalysisService} from './services/analysis.service';
-import {BehaviorSubject, first, Observable, Subscription} from 'rxjs';
+import {ProcessingService} from './services/processing.service';
+import {Observable, Subscription} from 'rxjs';
 import {LocalizationService} from './services/localization.service';
-import {AnalysisExportPeriodData} from './model/analysis-export-period.data';
-import {AnalysisExportDialogComponent} from './components/analysis-export-dialog/analysis-export-dialog.component';
 import {GlobalService} from './services/global.service';
-import {ConfirmationDialogComponent} from './components/confirmation-dialog/confirmation-dialog.component';
-import {ConfirmationData} from './model/confirmation.data';
-import {PreliminaryStudyData} from './model/preliminary-study.data';
-import {PreliminaryStudyDialogComponent} from './components/preliminary-study-dialog/preliminary-study-dialog.component';
+import {DocumentProcessingData} from './model/document-processing-data';
+import {DocumentProcessingFailure} from './model/document-processing-failure';
+import {HttpErrorResponse} from '@angular/common/http';
+import {ModelEnum} from './model/model.enum';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss'],
+    styleUrl: './app.component.scss',
     animations: [Animations.displayState]
 })
 export class AppComponent implements OnInit, OnDestroy {
-    minAudioDuration = MIN_AUDIO_DURATION;
-    maxAudioDuration = MAX_AUDIO_DURATION;
-    maxAudioFileSize = MAX_FILE_SIZE_KB;
-    acceptedAudioFileTypes = [MimeType.AUDIO_WAV, MimeType.AUDIO_MPEG, MimeType.AUDIO_OGG];
-    processing = false;
-    footerWithinViewport = true;
-    audio: BehaviorSubject<Blob | undefined> = new BehaviorSubject<Blob | undefined>(undefined);
-    httpErrorSubscription?: Subscription;
-    analysisExportPeriods?: Observable<AnalysisExportPeriodData[]>;
+    protected readonly maxFileCount = MAX_FILE_COUNT;
+    protected readonly maxFileSize = MAX_FILE_SIZE_MB;
+    protected readonly acceptedFileMimeTypes = ACCEPTED_MIME_TYPES;
 
-    constructor(private analysisService: AnalysisService,
+    protected documentProcessingData: (DocumentProcessingData | null)[] = [];
+    protected processCall?: (mode: ModelEnum) => Observable<DocumentProcessingData>;
+    protected model: ModelEnum;
+
+    private httpErrorSubscription?: Subscription;
+
+    constructor(private processingService: ProcessingService,
                 private localizationService: LocalizationService,
                 private globalService: GlobalService,
-                private snackBar: MatSnackBar,
-                private dialog: MatDialog) {
+                private snackBar: MatSnackBar) {
     }
 
     ngOnInit() {
         this.httpErrorSubscription = this.globalService.httpError.subscribe(() => this.handleHttpError());
-        this.analysisExportPeriods = this.analysisService.getAllExportPeriods();
     }
 
     ngOnDestroy() {
         this.httpErrorSubscription?.unsubscribe();
     }
 
-    onAnalyse = () => this.showPreliminaryStudyConfirmationDialog();
+    protected onFilesLoaded = async (files: File[]) => {
+        this.documentProcessingData = files.map(file => this.initDocumentProcessingData(file.name));
+        this.processCall = model => this.processingService.processFiles(model, files);
+    };
 
-    onAudioLoaded = (audio?: Blob) => this.audio.next(audio);
+    protected onUrlLoaded = (url: URL) => {
+        this.documentProcessingData = [this.initDocumentProcessingData(url)];
+        this.processCall = model => this.processingService.processRemote(model, url);
+    };
 
-    async onFileSelectError(error?: FileUploadError) {
-        const message = await (async () => {
+    protected onModelSelected = (model: ModelEnum) => {
+        this.model = model;
+    };
+
+    protected process = () => {
+        if (!this.documentProcessingData?.filter(x => x !== null)?.length || !this.processCall) {
+            return;
+        }
+        this.documentProcessingData.push(null);
+        const urlDocument = typeof this.documentProcessingData.at(0)?.resource === 'string';
+        this.processCall(this.model).subscribe({
+            next: data => {
+                const doc = this.documentProcessingData.at(urlDocument ? 0 : Number(data.name))!!;
+                Object.assign(doc, data);
+            },
+            error: (error?: HttpErrorResponse) => {
+                if (!urlDocument) {
+                    this.handleHttpError();
+                } else if (error?.status === 400) {
+                    const doc = this.documentProcessingData[0] as DocumentProcessingFailure;
+                    doc.errorMessage = JSON.parse(error?.error).message;
+                }
+            },
+            complete: () => {
+                this.processCall = undefined;
+            }
+        });
+    };
+
+    protected onFileSelectError = async (selectError: [FileUploadError, string?]) => {
+        const [error, filename] = selectError;
+        const message = (async () => {
             switch (error) {
-                case FileUploadError.INVALID_TYPE:
-                    return await this.localizationService.translate('invalid-file-type-supported-are', {
-                        supportedTypes: this.acceptedAudioFileTypes.map(({extension}) => extension)
+                case FileUploadError.MAX_FILE_COUNT_EXCEEDED:
+                    return await this.localizationService.translate('maximum-file-count-exceeded', {
+                        count: this.maxFileCount
                     });
-                case FileUploadError.DURATION_EXCEEDED:
-                    return await this.localizationService.translate('audio-duration-must-be-between-and-seconds-long', {
-                        minAudioDuration: this.minAudioDuration,
-                        maxAudioDuration: this.maxAudioDuration,
+                case FileUploadError.UNSUPPORTED_TYPE:
+                    return await this.localizationService.translate('unsupported-file-type', {
+                        filename
                     });
                 case FileUploadError.FILE_SIZE_EXCEEDED:
-                    return await this.localizationService.translate('file-is-too-big-maximum-allowed-size-is', {
-                        maxAudioFileSize: UnitUtil.kilobytesPrettyPrint(this.maxAudioFileSize)
+                    return await this.localizationService.translate('max-file-size-exceeded', {
+                        filename,
+                        maxAudioFileSize: UnitUtil.kilobytesPrettyPrint(this.maxFileSize)
                     });
                 default:
-                    return await this.localizationService.translate('an-error-occurred-during-file-upload');
+                    return await this.localizationService.translate('sorry-something-went-wrong');
             }
         })();
-        this.snackBar.open(message, 'OK');
-    }
+        this.snackBar.open(await message, 'OK');
+    };
 
-    async onRecordError(error?: AudioRecordError) {
-        const key = error === AudioRecordError.PERMISSIONS
-            ? 'insufficient-microphone-permissions'
-            : 'an-error-occurred-during-audio-recording';
-        const message = await this.localizationService.translate(key);
-        this.snackBar.open(message, 'OK');
-    }
+    private initDocumentProcessingData = (filename?: string | URL) => ({resource: filename} as DocumentProcessingData);
 
-    async onPlayerError() {
-        const message = await this.localizationService.translate('audio-player-is-not-supported-by-the-browser');
-        this.snackBar.open(message, 'OK');
-    }
-
-    onFooterWithinViewport(withinViewport: boolean) {
-        this.footerWithinViewport = withinViewport;
-    }
-
-    instanceOfFile = (blob?: Blob) => blob instanceof File;
-
-    notInstanceOfFile = (blob?: Blob) => !this.instanceOfFile(blob);
-
-    showAnalysisExportDialog() {
-        const dialogRef = this.dialog.open(AnalysisExportDialogComponent, {
-            panelClass: 'analysis-export-dialog',
-            data: this.analysisExportPeriods
-        });
-        dialogRef.afterClosed()
-            .pipe(first())
-            .subscribe((period?: AnalysisExportPeriodData) => period && this.analysisService.export(period));
-    }
-
-    private showPreliminaryStudyConfirmationDialog() {
-        const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-            data: {
-                title: 'preliminary-study',
-                message: 'preliminary-study-question',
-            } as ConfirmationData
-        });
-        dialogRef.afterClosed()
-            .pipe(first())
-            .subscribe((res: boolean) => res ? this.showPreliminaryStudyDialog() : this.process());
-    }
-
-    private showPreliminaryStudyDialog() {
-        const dialogRef = this.dialog.open(PreliminaryStudyDialogComponent, {
-            panelClass: 'preliminary-study-dialog',
-            disableClose: true,
-            data: this.localizationService.getLanguage()
-        });
-        dialogRef.afterClosed()
-            .pipe(first())
-            .subscribe((data: PreliminaryStudyData) => this.process(data));
-    }
-
-    private showAnalysisResultDialog(result: AnalysisResultData) {
-        this.dialog.open(AnalysisResultDialogComponent, {
-            panelClass: 'analysis-result-dialog',
-            data: result
-        });
-    }
-
-    private process(preliminaryStudy?: PreliminaryStudyData) {
-        this.processing = true;
-        this.analysisService.analyse(this.audio.value!, preliminaryStudy)
-            .pipe(first())
-            .subscribe({
-                next: result => this.showAnalysisResultDialog(result),
-                complete: () => {
-                    this.processing = false;
-                },
-                error: () => {
-                    this.processing = false;
-                }
-            });
-    }
-
-    private async handleHttpError() {
-        const message = await this.localizationService.translate('sorry-something-went-wrong');
-        this.snackBar.open(message, 'OK');
-    }
+    private handleHttpError = () => {
+        (async () => {
+            const message = await this.localizationService.translate('sorry-something-went-wrong');
+            this.snackBar.open(message, 'OK');
+        })();
+    };
 }

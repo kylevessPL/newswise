@@ -1,6 +1,60 @@
 export const IMAGES_DIR = '/assets/images';
-export const SUPPORTED_LANGUAGES = ['en'];
 export const ANIMATIONS_DIR = '/assets/animations';
-export const MIN_AUDIO_DURATION = 5;
-export const MAX_AUDIO_DURATION = 20;
-export const MAX_FILE_SIZE_KB = 5120;
+export const DATETIME_FORMAT = 'dd/MM/yyyy HH:mm:ss';
+export const SUPPORTED_LANGUAGES = ['en'];
+export const MAX_FILE_COUNT = 5;
+export const MAX_FILE_SIZE_MB = 100;
+export const ACCEPTED_MIME_TYPES = [
+    'application/epub+zip',
+    'application/msword',
+    'application/pdf',
+    'application/rtf',
+    'application/vnd.ms-word.document.macroenabled.12',
+    'application/vnd.ms-word.template.macroenabled.12',
+    'application/vnd.oasis.opendocument.flat.text',
+    'application/vnd.oasis.opendocument.graphics',
+    'application/vnd.oasis.opendocument.graphics-template',
+    'application/vnd.oasis.opendocument.image',
+    'application/vnd.oasis.opendocument.image-template',
+    'application/vnd.oasis.opendocument.text',
+    'application/vnd.oasis.opendocument.text-master',
+    'application/vnd.oasis.opendocument.text-template',
+    'application/vnd.oasis.opendocument.text-web',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.template',
+    'application/vnd.sun.xml.writer',
+    'application/vnd.wap.xhtml+xml',
+    'application/vnd.wordperfect; version=5.0',
+    'application/vnd.wordperfect; version=5.1',
+    'application/vnd.wordperfect; version=6.x',
+    'application/x-asp',
+    'application/x-fictionbook+xml',
+    'application/x-ibooks+zip',
+    'application/x-vnd.oasis.opendocument.graphics',
+    'application/x-vnd.oasis.opendocument.graphics-template',
+    'application/x-vnd.oasis.opendocument.image',
+    'application/x-vnd.oasis.opendocument.image-template',
+    'application/x-vnd.oasis.opendocument.text',
+    'application/x-vnd.oasis.opendocument.text-master',
+    'application/x-vnd.oasis.opendocument.text-template',
+    'application/x-vnd.oasis.opendocument.text-web',
+    'application/xhtml+xml',
+    'image/bmp',
+    'image/bpg',
+    'image/emf',
+    'image/gif',
+    'image/jp2',
+    'image/jpeg',
+    'image/jpx',
+    'image/jxl',
+    'image/png',
+    'image/tiff',
+    'image/webp',
+    'image/wmf',
+    'image/x-bpg',
+    'image/x-jbig2',
+    'image/x-ms-bmp',
+    'image/x-portable-pixmap',
+    'text/html',
+    'text/plain'
+];

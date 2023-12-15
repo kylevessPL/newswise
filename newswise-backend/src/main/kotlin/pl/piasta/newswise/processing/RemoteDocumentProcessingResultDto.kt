@@ -1,8 +1,6 @@
 package pl.piasta.newswise.processing
 
-import java.io.File
 import pl.piasta.newswise.common.rootCause
-import pl.piasta.newswise.extraction.ExtractedDocument
 
 private interface DocumentProcessingResult {
     val metadata: Map<String, Any>
@@ -12,26 +10,18 @@ private interface DocumentProcessingResult {
 data class RemoteDocumentProcessingResultDto(
     override val metadata: Map<String, Any>,
     override val predictions: Map<String, Int>
-) : DocumentProcessingResult {
-    constructor(document: ExtractedDocument, predictions: Map<String, Int>) : this(document.metadata, predictions)
-}
+) : DocumentProcessingResult
 
 sealed class FileDocumentProcessingResultDto {
-    abstract val filename: String
+    abstract val name: String
 
     data class Success(
-        override val filename: String,
+        override val name: String,
         override val metadata: Map<String, Any>,
         override val predictions: Map<String, Int>
-    ) : FileDocumentProcessingResultDto(), DocumentProcessingResult {
-        constructor(
-            file: File,
-            document: ExtractedDocument,
-            predictions: Map<String, Int>
-        ) : this(file.name, document.metadata, predictions)
-    }
+    ) : FileDocumentProcessingResultDto(), DocumentProcessingResult
 
-    data class Failure(override val filename: String, val errorMessage: String) : FileDocumentProcessingResultDto() {
-        constructor(file: File, error: Throwable) : this(file.name, error.rootCause.message ?: "Unexpected error")
+    data class Failure(override val name: String, val errorMessage: String) : FileDocumentProcessingResultDto() {
+        constructor(name: String, error: Throwable) : this(name, error.rootCause.message ?: "Unexpected error")
     }
 }

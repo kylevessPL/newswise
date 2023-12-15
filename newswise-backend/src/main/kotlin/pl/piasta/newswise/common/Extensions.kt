@@ -197,6 +197,14 @@ fun Map<String, Any>.joinToString(separator: Char = ',') = mapValues { (_, value
 fun Map<String, Any>.toStringProperties() = mapValues { (_, value) -> value.toString() }.toProperties()
 
 /**
+ * Returns the first value in the [Map] matching the given predicate, or null if no such value is found.
+ *
+ * @param predicate The predicate function to test keys.
+ * @return The first value matching the predicate, or null if no such value is found.
+ */
+fun <K, V> Map<K, V>.firstOrNull(predicate: (K) -> Boolean) = filterKeys(predicate).values.firstOrNull()
+
+/**
  * Convert the string representation to an Instant or return null if the conversion fails.
  *
  * @return The Instant parsed from the string, or null if the conversion fails.

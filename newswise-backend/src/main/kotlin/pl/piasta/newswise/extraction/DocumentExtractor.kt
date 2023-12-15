@@ -17,6 +17,7 @@ import org.languagetool.Language
 import org.languagetool.MultiThreadedJLanguageTool
 import org.languagetool.tools.Tools
 import pl.piasta.newswise.common.parse
+import pl.piasta.newswise.processing.DocumentProcessingException.InvalidDocumentURLException
 import pl.piasta.newswise.processing.DocumentProcessingException.InvalidNewsArticleDocumentException
 import pl.piasta.newswise.processing.DocumentProcessingException.UnsupportedDocumentLanguageException
 
@@ -57,7 +58,11 @@ class TikaDocumentExtractor(
         val contentHandler = BodyContentHandler(NO_BUFFER_LIMIT)
         val handler = BoilerpipeContentHandler(contentHandler, ArticleSentencesExtractor.INSTANCE)
         val metadata = Metadata()
-        parser.parse(this@process, handler, metadata, ioDispatcher)
+        runCatching {
+            parser.parse(this@process, handler, metadata, ioDispatcher)
+        }.getOrElse {
+            throw InvalidDocumentURLException()
+        }
         return metadata to contentHandler.toString()
     }
 

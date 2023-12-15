@@ -2,50 +2,30 @@
 <main class="main-section">
     <mat-card class="main-card">
         <mat-card-header>
-            <mat-card-title translate="analyse-breath"></mat-card-title>
+            <mat-card-title translate="analyse-documents"></mat-card-title>
+            <mat-card-subtitle>
+                <app-model-selector (modelEvent)="onModelSelected($event)"></app-model-selector>
+            </mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
+            <app-url-input (urlEvent)="onUrlLoaded($event)"></app-url-input>
+            <app-text-divider [text]="'or' | translate"></app-text-divider>
             <app-file-upload class="card-item-flex file-upload"
                              [placeholder]="'upload-from-computer' | translate"
-                             [minDuration]="minAudioDuration"
-                             [maxDuration]="maxAudioDuration"
-                             [maxSizeKb]="maxAudioFileSize"
-                             [mimeTypes]="acceptedAudioFileTypes | pluck: 'contentType'"
-                             [externalChange]="audio.asObservable() | obsSkipFirst | obsTransform: notInstanceOfFile"
+                             [maxCount]="maxFileCount"
+                             [maxSizeKb]="maxFileSize"
+                             [mimeTypes]="acceptedFileMimeTypes"
                              (errorEvent)="onFileSelectError($event)"
-                             (fileEvent)="onAudioLoaded($event)">
+                             (fileEvent)="onFilesLoaded($event)">
             </app-file-upload>
-            <app-text-divider [text]="'or' | translate"></app-text-divider>
-            <app-audio-record class="card-item-flex"
-                              [minDuration]="minAudioDuration"
-                              [maxDuration]="maxAudioDuration"
-                              [externalChange]="audio.asObservable() | obsSkipFirst | obsTransform: instanceOfFile"
-                              (errorEvent)="onRecordError($event)"
-                              (outputEvent)="onAudioLoaded($event)">
-            </app-audio-record>
-            <app-audio-player class="card-item-block"
-                              [audio]="(audio | async) ?? undefined"
-                              (errorEvent)="onPlayerError()">
-            </app-audio-player>
-            <app-lungs-animation class="card-item-block lungs-animation"
-                                 [@displayState]="processing"
-                                 [playing]="processing">
-            </app-lungs-animation>
             <mat-divider></mat-divider>
         </mat-card-content>
         <mat-card-actions>
-            <button mat-button [disabled]="!(audio | async)" (click)="onAnalyse()">
-                {{ 'analyse' | translate }}
-                <mat-icon>science</mat-icon>
+            <button mat-button [disabled]="!processCall" (click)="process()">
+                {{ 'analyse' | translate | uppercase }}
+                <mat-icon>manage_search</mat-icon>
             </button>
         </mat-card-actions>
     </mat-card>
-    <div class="export-container"
-         [ngClass]="footerWithinViewport ? 'export-container-no-scroll' : 'export-container-scroll'">
-        <button mat-fab extended class="export-button" (click)="showAnalysisExportDialog()">
-            <mat-icon svgIcon="excel"></mat-icon>
-            {{ 'export' | translate }}
-        </button>
-    </div>
 </main>
-<app-footer inViewport (inViewportAction)="onFooterWithinViewport($event.visible)"></app-footer>
+<app-footer></app-footer>

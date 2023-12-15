@@ -4,20 +4,22 @@ interface DocumentCategory {
     val category: String
 }
 
-enum class NewsArticleCategory(override val category: String) : DocumentCategory {
-    BUSINESS_MONEY_LABEL("Business&Money"),
-    CRIME_LEGAL_LABEL("Crime&Legal"),
-    ENTERTAINMENT_ARTS_LABEL("Entertainment&Arts"),
-    LIFESTYLE_LABEL("Lifestyle"),
-    SCI_TECH_EDUCATION_LABEL("SciTech&Education"),
-    SOCIETY_RELIGION_LABEL("Society&Religion"),
-    SPORTS_HEALTH_LABEL("Sports&Health"),
-    TRAVEL_FOOD_LABEL("Travel&Food"),
-    WORLD_POLITICS_LABEL("World&Politics");
+enum class NewsArticleCategory(val label: String) : DocumentCategory {
+    BUSINESS_MONEY("Business&Money"),
+    CRIME_LEGAL("Crime&Legal"),
+    ENTERTAINMENT_ARTS("Entertainment&Arts"),
+    LIFESTYLE("Lifestyle"),
+    SCI_TECH_EDUCATION("SciTech&Education"),
+    SOCIETY_RELIGION("Society&Religion"),
+    SPORTS_HEALTH("Sports&Health"),
+    TRAVEL_FOOD("Travel&Food"),
+    WORLD_POLITICS("World&Politics");
+
+    override val category = name
 
     companion object {
-        val categories = entries.map { it.category }
+        val categories = entries.map { it.label }
 
-        fun fromCategory(category: String) = entries.find { it.category == category }
+        fun fromCategory(category: String) = entries.find { it.label == category }
     }
 }

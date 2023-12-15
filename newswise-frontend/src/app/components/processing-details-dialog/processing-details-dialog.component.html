@@ -1,0 +1,29 @@
+<h1 mat-dialog-title translate="document-details" [align]="'center'"></h1>
+<div mat-dialog-content [align]="'center'">
+    <mat-accordion>
+        <mat-expansion-panel *ngFor="let detail of details; let i = index" [expanded]="isOpened(i)" (opened)="open(i)">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    {{ detail.title | translate }}
+                </mat-panel-title>
+                <mat-panel-description>
+                    {{ detail.description | translate }}
+                    <mat-icon>{{ detail.icon }}</mat-icon>
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+            <mat-list role="list">
+                <mat-list-item *ngFor="let item of detail.data | keyvalue" role="listitem">
+                    <strong>{{ item.key | translate }}</strong>
+                    <span>{{ item.value | dateFormatterPipe | translate }}</span>
+                </mat-list-item>
+            </mat-list>
+            <mat-action-row>
+                <button *ngIf="!isFirst()" mat-button color="warn" translate="previous" (click)="previous()"></button>
+                <button *ngIf="!isLast()" mat-button color="accent" translate="next" (click)="next()"></button>
+            </mat-action-row>
+        </mat-expansion-panel>
+    </mat-accordion>
+</div>
+<div mat-dialog-actions [align]="'center'">
+    <button mat-button>OK</button>
+</div>

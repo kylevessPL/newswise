@@ -1,81 +1,63 @@
-import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {FileUploadError} from '../../model/file-upload.error';
-import AudioUtil from '../../utils/audio.util';
-import {Observable, Subscription} from 'rxjs';
+
+class FileValidationError extends Error {
+    readonly filename: string | undefined;
+    readonly error: FileUploadError;
+
+    constructor(error: FileUploadError, filename: string | undefined = undefined) {
+        super();
+        this.filename = filename;
+        this.error = error;
+    }
+}
 
 @Component({
     selector: 'app-file-upload',
     templateUrl: './file-upload.component.html',
-    styleUrls: ['./file-upload.component.scss']
+    styleUrl: './file-upload.component.scss'
 })
-export class FileUploadComponent implements OnInit, OnDestroy {
-    @Input() placeholder?: string;
-    @Input() minDuration?: number;
-    @Input() maxDuration?: number;
+export class FileUploadComponent {
+    @Input() placeholder = 'Choose file';
+    @Input() maxCount?: number;
     @Input() maxSizeKb?: number;
     @Input() mimeTypes = ['*'];
-    @Input() externalChange?: Observable<boolean>;
-    @Output() fileEvent = new EventEmitter<File>();
-    @Output() errorEvent = new EventEmitter<FileUploadError>();
-
-    fileName?: string;
+    @Output() fileEvent = new EventEmitter<File[]>();
+    @Output() errorEvent = new EventEmitter<[FileUploadError, string?]>();
 
     @ViewChild('fileUpload') private fileUpload?: ElementRef<HTMLInputElement>;
-    private externalChangeSubscription?: Subscription;
 
-    ngOnInit() {
-        this.externalChangeSubscription = this.externalChange?.subscribe(changed => this.handleExternalChange(changed));
-    }
-
-    ngOnDestroy = () => this.externalChangeSubscription?.unsubscribe();
-
-    onFileSelected(event: Event) {
-        const file = this.extractFile(event);
-        file && this.validateFile(file).then(() => {
-            this.fileName = file.name;
-            this.fileEvent.emit(file);
-        }).catch(error => {
-            this.clearSelection();
-            this.fileEvent.emit(undefined);
-            this.errorEvent.emit(error);
-        });
-    }
-
-    private handleExternalChange(changed: boolean) {
-        if (changed) {
-            this.clearSelection();
+    protected onFilesSelected = (event: Event) => {
+        const files = this.extractFiles(event);
+        try {
+            const collectedFiles = Array.from(this.collectFiles(files));
+            this.fileEvent.emit(collectedFiles);
+        } catch (ex) {
+            ex instanceof FileValidationError && this.errorEvent.emit([ex.error, ex.filename]);
         }
-    }
-
-    private clearSelection() {
         this.fileUpload!.nativeElement.value = '';
-        this.fileName = undefined;
-    }
+    };
 
-    private extractFile(event: Event) {
+    private extractFiles = (event: Event) => {
         const target = event.target as HTMLInputElement;
-        return (target.files as FileList)[0];
-    }
+        return target.files as FileList;
+    };
 
-    private async validateFile(file: File) {
-        if (!this.isMimeTypeValid(file)) {
-            return Promise.reject(FileUploadError.INVALID_TYPE);
-        } else if (!this.isSizeValid(file)) {
-            return Promise.reject(FileUploadError.FILE_SIZE_EXCEEDED);
-        } else if (!await this.isDurationValid(file)) {
-            return Promise.reject(FileUploadError.DURATION_EXCEEDED);
+    private* collectFiles(files: FileList) {
+        if (this.maxCount && this.maxCount < files.length) {
+            throw new FileValidationError(FileUploadError.MAX_FILE_COUNT_EXCEEDED);
         }
-        return Promise.resolve();
+        for (const file of Array.from(files)) {
+            if (!this.isMimeTypeValid(file)) {
+                throw new FileValidationError(FileUploadError.UNSUPPORTED_TYPE, file.name);
+            } else if (!this.isSizeValid(file)) {
+                throw new FileValidationError(FileUploadError.FILE_SIZE_EXCEEDED, file.name);
+            }
+            yield file;
+        }
     }
 
     private isSizeValid = (file: File) => !this.maxSizeKb || this.maxSizeKb * 1024 >= file.size;
 
     private isMimeTypeValid = (file: File) => this.mimeTypes.includes('*') || this.mimeTypes.includes(file.type);
-
-    private async isDurationValid(file: File) {
-        const audioBuffer = await AudioUtil.blobToAudioBuffer(file);
-        const minDurationValid = !this.minDuration || this.minDuration <= audioBuffer.duration;
-        const maxDurationValid = !this.maxDuration || this.maxDuration >= audioBuffer.duration;
-        return minDurationValid && maxDurationValid;
-    }
 }

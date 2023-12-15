@@ -1,14 +1,6 @@
 package pl.piasta.newswise.classification.opennlp
 
-import edu.stanford.nlp.classify.Dataset
-import edu.stanford.nlp.ling.Datum
-import edu.stanford.nlp.ling.RVFDatum
-import edu.stanford.nlp.stats.Counter
 import java.io.File
-import kotlin.math.exp
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import opennlp.dl.InferenceOptions
 import opennlp.dl.doccat.DocumentCategorizerDL
 import opennlp.dl.doccat.scoring.AverageClassificationScoringStrategy

@@ -12,12 +12,10 @@ export class HttpErrorInterceptor implements HttpInterceptor {
     intercept(request: HttpRequest<any>, next: HttpHandler) {
         return next.handle(request).pipe(
             catchError((error: HttpErrorResponse) => {
-                if (error.error instanceof ErrorEvent) {
-                    console.error(`An HTTP error occurred: ${error.error.message}`);
-                } else {
-                    console.error(`Backend returned error code: ${error.status}\nMessage: ${error.message}`);
+                if (!(error.status >= 400 && error.status < 500)) {
+                    this.globalService.httpError.next(error);
                 }
-                this.globalService.httpError.next(error);
+                console.error(error);
                 return throwError(() => error);
             })
         );

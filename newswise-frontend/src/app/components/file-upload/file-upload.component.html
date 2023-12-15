@@ -1,6 +1,6 @@
 <button class="file-upload-button" mat-raised-button (click)="fileUpload.click()">
-    {{ fileName ?? placeholder }}
+    {{ placeholder }}
     <mat-icon>upload</mat-icon>
 </button>
 
-<input [hidden]="true" type="file" [accept]="mimeTypes" (change)="onFileSelected($event)" #fileUpload>
+<input #fileUpload [hidden]="true" type="file" [accept]="mimeTypes" (change)="onFilesSelected($event)" multiple>

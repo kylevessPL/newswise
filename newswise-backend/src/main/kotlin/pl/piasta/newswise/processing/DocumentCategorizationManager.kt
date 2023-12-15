@@ -1,6 +1,5 @@
 package pl.piasta.newswise.processing
 
-import pl.piasta.newswise.classification.DocumentCategory
 import pl.piasta.newswise.classification.NewsArticleClassifier
 import pl.piasta.newswise.classification.corenlp.CoreNLPNewsArticleClassifier
 import pl.piasta.newswise.classification.opennlp.OpenNLPBERTNewsArticleClassifier
@@ -12,7 +11,7 @@ import pl.piasta.newswise.processing.CategorizerModel.OPENNLP_ME
 import pl.piasta.newswise.processing.CategorizerModel.WEKA_ME
 
 interface DocumentCategorizationManager {
-    suspend fun categorize(document: String, model: CategorizerModel): Map<DocumentCategory, Int>
+    suspend fun categorize(document: String, model: CategorizerModel): Map<String, Int>
 }
 
 class NewsArticleCategorizationManager(
@@ -29,5 +28,7 @@ class NewsArticleCategorizationManager(
             WEKA_ME -> wekaNewsArticleClassifier
         }
 
-    override suspend fun categorize(document: String, model: CategorizerModel) = model.classifier.classify(document)
+    override suspend fun categorize(document: String, model: CategorizerModel) = model.classifier
+        .classify(document)
+        .mapKeys { it.key.category }
 }

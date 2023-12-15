@@ -10,21 +10,14 @@ import {MatCardModule} from '@angular/material/card';
 import {TextDividerComponent} from './components/text-divider/text-divider.component';
 import {FileUploadComponent} from './components/file-upload/file-upload.component';
 import {MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule} from '@angular/material/snack-bar';
-import {PluckPipe} from './pipes/pluck.pipe';
-import {AudioPlayerComponent} from './components/audio-player/audio-player.component';
-import {BlobUrlPipe} from './pipes/blob-url.pipe';
-import {AudioRecordComponent} from './components/audio-record/audio-record.component';
-import {AudioContextModule} from 'angular-audio-context';
+import {ResourcePipe} from './pipes/resource.pipe';
 import {LottieCacheModule, LottieModule} from 'ngx-lottie';
-import {LungsAnimationComponent} from './components/lungs-animation/lungs-animation.component';
+import {AnimationComponent} from './components/animation/animation.component';
 import {MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule} from '@angular/material/dialog';
-import {AnalysisResultDialogComponent} from './components/analysis-result-dialog/analysis-result-dialog.component';
-import {NgOptimizedImage} from '@angular/common';
+import {DatePipe, NgOptimizedImage} from '@angular/common';
 import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
 import {HttpErrorInterceptor} from './config/interceptors/http-error.interceptor';
 import player from 'lottie-web/build/player/lottie_svg';
-import {ObsTransformPipe} from './pipes/obs-transform.pipe';
-import {ObsSkipFirstPipe} from './pipes/obs-skip-first.pipe';
 import {MissingTranslationHandler, TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {FooterComponent} from './components/footer/footer.component';
@@ -33,12 +26,17 @@ import {MatSelectModule} from '@angular/material/select';
 import {ReactiveFormsModule} from '@angular/forms';
 import {LocalizationService} from './services/localization.service';
 import {IconsService} from './services/icons.service';
-import {InViewportModule} from 'ng-in-viewport';
-import {AnalysisExportDialogComponent} from './components/analysis-export-dialog/analysis-export-dialog.component';
 import {GlobalMissingTranslationHandler} from './config/handlers/global-missing-translation.handler';
-import {SurveyModule} from 'survey-angular-ui';
-import {PreliminaryStudyDialogComponent} from './components/preliminary-study-dialog/preliminary-study-dialog.component';
-import {ConfirmationDialogComponent} from './components/confirmation-dialog/confirmation-dialog.component';
+import {UrlInputComponent} from './components/url-input/url-input.component';
+import {MatInputModule} from '@angular/material/input';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatChipsModule} from '@angular/material/chips';
+import {ModelSelectorComponent} from './components/model-selector/model-selector.component';
+import {ProcessingResultComponent} from './components/processing-result/processing-result.component';
+import {ProcessingDetailsDialogComponent} from './components/processing-details-dialog/processing-details-dialog.component';
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatListModule} from '@angular/material/list';
+import {DateFormatterPipe} from './pipes/date-formatter.pipe';
 
 export function iconsInitializerFactory(iconsService: IconsService) {
     return () => iconsService.initialize();
@@ -54,22 +52,18 @@ export function httpLoaderFactory(http: HttpClient) {
 
 @NgModule({
     declarations: [
-        PluckPipe,
-        ObsSkipFirstPipe,
-        ObsTransformPipe,
-        BlobUrlPipe,
+        DateFormatterPipe,
+        ResourcePipe,
         AppComponent,
         FooterComponent,
         HeaderComponent,
         TextDividerComponent,
+        UrlInputComponent,
         FileUploadComponent,
-        AudioRecordComponent,
-        AudioPlayerComponent,
-        LungsAnimationComponent,
-        ConfirmationDialogComponent,
-        PreliminaryStudyDialogComponent,
-        AnalysisResultDialogComponent,
-        AnalysisExportDialogComponent
+        ProcessingDetailsDialogComponent,
+        ModelSelectorComponent,
+        ProcessingResultComponent,
+        AnimationComponent
     ],
     imports: [
         BrowserModule,
@@ -81,10 +75,7 @@ export function httpLoaderFactory(http: HttpClient) {
         MatDialogModule,
         MatSnackBarModule,
         HttpClientModule,
-        SurveyModule,
         NgOptimizedImage,
-        InViewportModule,
-        AudioContextModule.forRoot('balanced'),
         TranslateModule.forRoot({
             defaultLanguage: 'en',
             missingTranslationHandler: {
@@ -103,9 +94,15 @@ export function httpLoaderFactory(http: HttpClient) {
         LottieCacheModule.forRoot(),
         MatFormFieldModule,
         MatSelectModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        MatInputModule,
+        MatProgressSpinnerModule,
+        MatChipsModule,
+        MatExpansionModule,
+        MatListModule
     ],
     providers: [
+        DatePipe,
         {
             provide: APP_INITIALIZER,
             useFactory: localizationInitializerFactory,
