@@ -27,18 +27,6 @@
             ],
             "rxjs/*": [
                 "node_modules/rxjs/*"
-            ],
-            "stream": [
-                "node_modules/stream-browserify"
-            ],
-            "http": [
-                "node_modules/stream-http"
-            ],
-            "https": [
-                "node_modules/https-browserify"
-            ],
-            "url": [
-                "node_modules/url"
             ]
         },
         "typeRoots": [

@@ -12,13 +12,33 @@ body {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  pointer-events: none;
 }
 
-.mat-card {
+.card-item-flex {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+mat-label {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: text;
+}
+
+mat-card {
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
+}
+
+.mat-mdc-card-header-text {
+  margin: 0;
 }
 
 @media screen and (min-width: 536px) {

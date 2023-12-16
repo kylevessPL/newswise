@@ -1,18 +1,54 @@
-.documents {
+:host {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(177px, 0));
+  grid-gap: 16px;
+  justify-content: center;
+}
+
+mat-card {
+  border-radius: 12px;
+  animation: append-animate .3s linear;
+}
+
+mat-card-title {
+  line-height: unset;
+  font-size: xxx-large;
+}
+
+mat-card-subtitle {
   display: flex;
-  justify-content: space-around;
-  flex-flow: row wrap;
+  margin: 16px 0;
+
+  > div {
+    flex-grow: 1;
+    width: 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
 }
 
 .result {
   font-size: 14px;
   font-weight: 500;
 
-  .success {
+  &.success {
     color: #43a047;
   }
 
-  .failure {
+  &.failure {
     color: #dd2e44;
+  }
+}
+
+@keyframes append-animate {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
   }
 }

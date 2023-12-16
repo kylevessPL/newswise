@@ -2,13 +2,14 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {restUrl} from '../../environments/rest-url';
-import {defer, finalize, first, Observable, Subject} from 'rxjs';
+import {defer, finalize, first, map, Observable, Subject} from 'rxjs';
 import {DocumentProcessingSuccess} from '../model/document-processing-success';
 import {DocumentProcessingData} from '../model/document-processing-data';
 import {EventStreamContentType, fetchEventSource} from '@microsoft/fetch-event-source';
 import {EventEnum} from '../model/event.enum';
 import {DocumentProcessingFailure} from '../model/document-processing-failure';
 import {ModelEnum} from '../model/model.enum';
+import DocumentUtil from '../utils/document.util';
 
 class ClosedConnectionError extends Error {
     constructor() {
@@ -33,7 +34,7 @@ export class ProcessingService {
     processRemote = (model: ModelEnum, url: URL) => this.httpClient
         .get<DocumentProcessingSuccess>(`${environment.apiUrl}/${restUrl.processing}/${model}/${restUrl.remote}`, {
             params: {url: encodeURI(url.toString())}
-        }).pipe(first());
+        }).pipe(map(this.mapResponse), first());
 
     processFiles = (model: ModelEnum, files: File[]) => {
         const data = files.reduce((formData, file, idx) => {
@@ -83,6 +84,19 @@ export class ProcessingService {
                 results.error(err);
             }
         }).then();
-        return results.pipe(finalize(() => controller.abort()));
+        return results.pipe(map(this.mapResponse), finalize(() => controller.abort()));
     });
+
+    private mapResponse = (x: DocumentProcessingData) => ({
+        ...x,
+        metadata: this.isSuccess(x) ? this.createMap(x.metadata) : undefined,
+        predictions: this.isSuccess(x) ? this.createMap(x.predictions) : undefined
+    } as DocumentProcessingSuccess);
+
+    private createMap = (data: Map<string, number>) => data !== undefined
+        ? new Map(Object.entries(data))
+        : data;
+
+    private isSuccess = (document: DocumentProcessingData): document is DocumentProcessingSuccess =>
+        DocumentUtil.isSuccess(document);
 }

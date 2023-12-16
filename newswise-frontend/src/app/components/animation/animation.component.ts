@@ -1,6 +1,5 @@
-import {Component, Input, NgZone} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {AnimationOptions} from 'ngx-lottie';
-import {AnimationItem} from 'lottie-web';
 
 export type ViewBox = [number, number, number, number];
 
@@ -12,11 +11,6 @@ export class AnimationComponent {
     @Input() path: string;
     @Input() viewBox: ViewBox;
 
-    private animation?: AnimationItem;
-
-    constructor(private ngZone: NgZone) {
-    }
-
     protected options = () => ({
         path: this.path,
         rendererSettings: {
@@ -24,8 +18,4 @@ export class AnimationComponent {
             viewBoxSize: this.viewBox?.join(' ')
         }
     } as AnimationOptions);
-
-    protected animationCreated = (animation: AnimationItem) => {
-        this.animation = animation;
-    };
 }

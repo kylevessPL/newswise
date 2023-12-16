@@ -60,7 +60,7 @@ export class ProcessingDetailsDialogComponent {
         ));
         return {
             title: 'topic-predicitons',
-            description: 'prediction-distribution-for-all-news-article-topics',
+            description: 'prediction-distribution-for-all-press-article-topics',
             icon: 'psychology_alt',
             data
         } as Details;

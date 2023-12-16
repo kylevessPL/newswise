@@ -37,6 +37,7 @@ import {ProcessingDetailsDialogComponent} from './components/processing-details-
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatListModule} from '@angular/material/list';
 import {DateFormatterPipe} from './pipes/date-formatter.pipe';
+import {FilterPipe} from './pipes/filter.pipe';
 
 export function iconsInitializerFactory(iconsService: IconsService) {
     return () => iconsService.initialize();
@@ -54,6 +55,7 @@ export function httpLoaderFactory(http: HttpClient) {
     declarations: [
         DateFormatterPipe,
         ResourcePipe,
+        FilterPipe,
         AppComponent,
         FooterComponent,
         HeaderComponent,

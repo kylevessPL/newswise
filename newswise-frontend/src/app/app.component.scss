@@ -4,7 +4,7 @@
   min-height: 100vh;
 }
 
-.main-section {
+main {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -12,13 +12,10 @@
   padding: 16px;
 }
 
-.card-item-flex {
-  display: inline-flex;
-  justify-content: center;
-  margin-top: 15px;
-  margin-bottom: 15px;
+app-processing-result {
+  margin-top: 16px;
 }
 
-.file-upload {
+app-file-upload {
   width: 350px;
 }

@@ -1,11 +1,11 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ACCEPTED_MIME_TYPES, MAX_FILE_COUNT, MAX_FILE_SIZE_MB} from './commons/app.constants';
+import {ACCEPTED_MIME_TYPES, MAX_FILE_COUNT, MAX_FILE_SIZE_KB} from './commons/app.constants';
 import {FileUploadError} from './model/file-upload.error';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import UnitUtil from './utils/unit.util';
 import {Animations} from './commons/app.animations';
 import {ProcessingService} from './services/processing.service';
-import {Observable, Subscription} from 'rxjs';
+import {finalize, Observable, Subscription} from 'rxjs';
 import {LocalizationService} from './services/localization.service';
 import {GlobalService} from './services/global.service';
 import {DocumentProcessingData} from './model/document-processing-data';
@@ -21,12 +21,20 @@ import {ModelEnum} from './model/model.enum';
 })
 export class AppComponent implements OnInit, OnDestroy {
     protected readonly maxFileCount = MAX_FILE_COUNT;
-    protected readonly maxFileSize = MAX_FILE_SIZE_MB;
+    protected readonly maxFileSize = MAX_FILE_SIZE_KB;
     protected readonly acceptedFileMimeTypes = ACCEPTED_MIME_TYPES;
 
     protected documentProcessingData: (DocumentProcessingData | null)[] = [];
     protected processCall?: (mode: ModelEnum) => Observable<DocumentProcessingData>;
     protected model: ModelEnum;
+
+    protected get configurationEnabled() {
+        return this.processCall && this.documentProcessingData.at(-1) !== null || !this.processCall;
+    }
+
+    protected get analysisEnabled() {
+        return this.processCall && this.documentProcessingData.at(-1) !== null;
+    }
 
     private httpErrorSubscription?: Subscription;
 
@@ -63,24 +71,26 @@ export class AppComponent implements OnInit, OnDestroy {
             return;
         }
         this.documentProcessingData.push(null);
-        const urlDocument = typeof this.documentProcessingData.at(0)?.resource === 'string';
-        this.processCall(this.model).subscribe({
-            next: data => {
-                const doc = this.documentProcessingData.at(urlDocument ? 0 : Number(data.name))!!;
-                Object.assign(doc, data);
-            },
-            error: (error?: HttpErrorResponse) => {
-                if (!urlDocument) {
-                    this.handleHttpError();
-                } else if (error?.status === 400) {
-                    const doc = this.documentProcessingData[0] as DocumentProcessingFailure;
-                    doc.errorMessage = JSON.parse(error?.error).message;
-                }
-            },
-            complete: () => {
+        const urlDocument = typeof this.documentProcessingData[0]?.resource !== 'string';
+        this.processCall(this.model)
+            .pipe(finalize(() => {
                 this.processCall = undefined;
-            }
-        });
+            }))
+            .subscribe({
+                next: data => {
+                    const index = !urlDocument ? Number(data.name) : 0;
+                    const doc = this.documentProcessingData[index];
+                    this.documentProcessingData[index] = {...doc, ...data};
+                },
+                error: (error?: HttpErrorResponse) => {
+                    if (!urlDocument) {
+                        this.handleHttpError();
+                    } else if (error?.status === 400) {
+                        const doc = this.documentProcessingData[0] as DocumentProcessingFailure;
+                        doc.errorMessage = error?.error.message;
+                    }
+                }
+            });
     };
 
     protected onFileSelectError = async (selectError: [FileUploadError, string?]) => {
@@ -88,7 +98,7 @@ export class AppComponent implements OnInit, OnDestroy {
         const message = (async () => {
             switch (error) {
                 case FileUploadError.MAX_FILE_COUNT_EXCEEDED:
-                    return await this.localizationService.translate('maximum-file-count-exceeded', {
+                    return await this.localizationService.translate('max-file-count-exceeded', {
                         count: this.maxFileCount
                     });
                 case FileUploadError.UNSUPPORTED_TYPE:

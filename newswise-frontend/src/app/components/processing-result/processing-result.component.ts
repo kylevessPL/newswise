@@ -8,6 +8,7 @@ import {ProcessingDetailsDialogComponent} from '../processing-details-dialog/pro
 import {DocumentProcessingError} from '../../model/document-processing-error.enum';
 import EnumUtil from '../../utils/enum.util';
 import {Animations} from '../../commons/app.animations';
+import DocumentUtil from '../../utils/document.util';
 
 @Component({
     selector: 'app-processing-result',
@@ -16,7 +17,7 @@ import {Animations} from '../../commons/app.animations';
     animations: [Animations.displayState]
 })
 export class ProcessingResultComponent {
-    @Input() documents: DocumentProcessingData[];
+    @Input() documents: (DocumentProcessingData | null)[];
 
     constructor(private matDialog: MatDialog) {
     }
@@ -29,10 +30,10 @@ export class ProcessingResultComponent {
         !this.ready && !this.isSuccess(document) && !this.isFailure(document);
 
     protected isSuccess = (document: DocumentProcessingData): document is DocumentProcessingSuccess =>
-        'predictions' in document;
+        DocumentUtil.isSuccess(document);
 
     protected isFailure = (document: DocumentProcessingData): document is DocumentProcessingFailure =>
-        'errorMessage' in document;
+        DocumentUtil.isFailure(document);
 
     protected documentIcon = (document: DocumentProcessingData) => {
         if (this.ready) {

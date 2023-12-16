@@ -1,11 +1,10 @@
-<form #ngForm="ngForm" [formGroup]="form" (ngSubmit)="form.valid && apply()" novalidate>
-    <mat-form-field>
+<form #ngForm="ngForm" [formGroup]="form" (ngSubmit)="apply()" novalidate>
+    <mat-form-field subscriptSizing="dynamic">
         <mat-label translate="document-url"></mat-label>
-        <input matInput type="url" formControlName="url">
-        <mat-error *ngIf="hasError()" translate="invalid-document-url"></mat-error>
-        <mat-spinner *ngIf="form.pending" matSuffix diameter="16"></mat-spinner>
-        <button *ngIf="hasValue()" matSuffix mat-icon-button type="button" (click)="ngForm.onSubmit($event)">
-            <mat-icon>done</mat-icon>
+        <input #input matInput [placeholder]="'enter-press-article-url' | translate" type="url" formControlName="url">
+        <mat-icon matIconPrefix color="accent">http</mat-icon>
+        <button *ngIf="input.value.trim()" matSuffix mat-icon-button type="submit">
+            <mat-icon class="icon-suffix">done</mat-icon>
         </button>
     </mat-form-field>
 </form>

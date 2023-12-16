@@ -1,31 +1,37 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import normalizeUrl from 'normalize-url';
-import {map, Subscription} from 'rxjs';
-import ValidationUtil from '../../utils/validation.util';
+import {Subscription} from 'rxjs';
 
 @Component({
     selector: 'app-url-input',
     templateUrl: './url-input.component.html',
     styleUrl: './url-input.component.scss'
 })
-export class UrlInputComponent implements OnInit, OnDestroy {
+export class UrlInputComponent implements OnInit, OnChanges, OnDestroy {
+    @Input() disabled = false;
     @Output() urlEvent = new EventEmitter<URL>();
 
     protected form: FormGroup;
 
     private changeSubscription?: Subscription;
 
+    private get url() {
+        return this.form?.get('url');
+    }
+
     constructor(private fb: FormBuilder) {
     }
 
     ngOnInit() {
         this.form = this.fb.group({
-            url: ['', [], [ValidationUtil.urlValidator]]
+            url: '',
         }, {updateOn: 'submit'});
-        this.changeSubscription = this.form.get('url')?.valueChanges
-            .pipe(map((value: string) => this.normalizeUrl(value)))
-            .subscribe(value => this.setValue(value));
+        this.changeSubscription = this.url?.valueChanges.subscribe(value => this.setValue(value));
+    }
+
+    ngOnChanges() {
+        this.disabled ? this.url?.disable({emitEvent: false}) : this.url?.enable({emitEvent: false});
     }
 
     ngOnDestroy() {
@@ -33,15 +39,19 @@ export class UrlInputComponent implements OnInit, OnDestroy {
     }
 
     protected apply = () => {
-        const url: string = this.form.get('url')?.value;
-        this.urlEvent.emit(new URL(url));
+        const url: string = this.url?.value;
+        url !== '' && this.urlEvent.emit(new URL(url));
     };
 
-    protected hasValue = () => (this.form.get('url')?.value ?? '') !== '';
-
-    protected hasError = () => this.form.get('url')?.hasError('invalidUrl') ?? false;
-
-    private setValue = (value: string) => this.form.get('url')?.setValue(value, {emitEvent: false});
+    private setValue = (value: string) => {
+        let url;
+        try {
+            url = this.normalizeUrl(value);
+        } catch {
+            url = '';
+        }
+        this.url?.setValue(url, {emitEvent: false});
+    };
 
     private normalizeUrl = (url: string) => normalizeUrl(url, {
         stripAuthentication: false,
@@ -49,4 +59,5 @@ export class UrlInputComponent implements OnInit, OnDestroy {
         removeQueryParameters: false,
         sortQueryParameters: false
     });
+    protected readonly console = console;
 }

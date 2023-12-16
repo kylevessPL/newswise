@@ -2,8 +2,8 @@ export const IMAGES_DIR = '/assets/images';
 export const ANIMATIONS_DIR = '/assets/animations';
 export const DATETIME_FORMAT = 'dd/MM/yyyy HH:mm:ss';
 export const SUPPORTED_LANGUAGES = ['en'];
-export const MAX_FILE_COUNT = 5;
-export const MAX_FILE_SIZE_MB = 100;
+export const MAX_FILE_COUNT = 8;
+export const MAX_FILE_SIZE_KB = 102400;
 export const ACCEPTED_MIME_TYPES = [
     'application/epub+zip',
     'application/msword',

@@ -1,16 +1,21 @@
 <app-header></app-header>
-<main class="main-section">
-    <mat-card class="main-card">
+<main>
+    <mat-card>
         <mat-card-header>
             <mat-card-title translate="analyse-documents"></mat-card-title>
             <mat-card-subtitle>
-                <app-model-selector (modelEvent)="onModelSelected($event)"></app-model-selector>
+                <app-model-selector [disabled]="!configurationEnabled" (modelEvent)="onModelSelected($event)">
+                </app-model-selector>
             </mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-            <app-url-input (urlEvent)="onUrlLoaded($event)"></app-url-input>
+            <app-url-input class="card-item-flex"
+                           [disabled]="!configurationEnabled"
+                           (urlEvent)="onUrlLoaded($event)">
+            </app-url-input>
             <app-text-divider [text]="'or' | translate"></app-text-divider>
-            <app-file-upload class="card-item-flex file-upload"
+            <app-file-upload class="card-item-flex"
+                             [disabled]="!configurationEnabled"
                              [placeholder]="'upload-from-computer' | translate"
                              [maxCount]="maxFileCount"
                              [maxSizeKb]="maxFileSize"
@@ -21,11 +26,13 @@
             <mat-divider></mat-divider>
         </mat-card-content>
         <mat-card-actions>
-            <button mat-button [disabled]="!processCall" (click)="process()">
+            <button mat-button color="primary" [disabled]="!analysisEnabled" (click)="process()">
                 {{ 'analyse' | translate | uppercase }}
-                <mat-icon>manage_search</mat-icon>
+                <mat-icon>science</mat-icon>
             </button>
         </mat-card-actions>
     </mat-card>
+    <app-processing-result *ngIf="documentProcessingData.length" [documents]="documentProcessingData" @displayState>
+    </app-processing-result>
 </main>
 <app-footer></app-footer>

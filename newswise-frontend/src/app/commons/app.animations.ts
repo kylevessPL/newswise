@@ -1,22 +1,20 @@
-import {animate, style, transition, trigger} from '@angular/animations';
+import {animate, AUTO_STYLE, style, transition, trigger} from '@angular/animations';
 
 export const Animations = {
     displayState: trigger('displayState', [
-        transition(
-            ':enter',
-            [
-                style({height: 0, opacity: 0}),
-                animate('1s ease-out',
-                    style({height: '*', opacity: 1}))
-            ]
-        ),
-        transition(
-            ':leave',
-            [
-                style({height: '*', opacity: 1}),
-                animate('1s ease-in',
-                    style({height: 0, opacity: 0}))
-            ]
-        )
+        transition(':enter', [
+            style({overflow: 'hidden', height: 0}),
+            animate(
+                '300ms ease-in',
+                style({overflow: 'hidden', height: AUTO_STYLE})
+            )
+        ]),
+        transition(':leave', [
+            style({overflow: 'hidden', height: AUTO_STYLE}),
+            animate(
+                '300ms ease-out',
+                style({overflow: 'hidden', height: 0})
+            )
+        ])
     ])
 };

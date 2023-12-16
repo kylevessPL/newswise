@@ -1,30 +1,33 @@
-<mat-card *ngFor="let document of documents" class="documents" @displayState>
+<mat-card *ngFor="let document of documents | filterPipe: null">
     <mat-card-header>
         <mat-card-title>
             <img *ngIf="!isProcessing(document); else processing"
                  draggable="false"
-                 width="276.5"
-                 height="369"
+                 width="145"
+                 height="194"
+                 class="disable-select"
                  [ngSrc]="documentIcon(document)"
                  [alt]="'document-icon' | translate">
             <ng-template #processing>
-                <app-animation [path]="documentIcon(document)" [viewBox]="[0, 0, 1920, 1080]">
-                </app-animation>
+                <!--                <app-animation [path]="documentIcon(document)" [viewBox]="[0, 0, 1920, 1080]">-->
+                <!--                </app-animation>-->
             </ng-template>
         </mat-card-title>
-        <mat-card-subtitle>{{ document.resource | resourcePipe }}</mat-card-subtitle>
+        <mat-card-subtitle>
+            <div>{{ document.resource | resourcePipe }}</div>
+        </mat-card-subtitle>
     </mat-card-header>
-    <mat-card-content>
-        <span *ngIf="isSuccess(document)" [translate]="extractTopic(document)" class="result success" @displayState>
+    <mat-card-content *ngIf="isSuccess(document) || isFailure(document)">
+        <span *ngIf="isSuccess(document)" [translate]="extractTopic(document)" class="result success">
         </span>
-        <span *ngIf="isFailure(document)" [translate]="extractError(document)" class="result failure" @displayState>
+        <span *ngIf="isFailure(document)" [translate]="extractError(document)" class="result failure">
         </span>
-        <mat-divider></mat-divider>
+        <mat-divider *ngIf="isSuccess(document)"></mat-divider>
     </mat-card-content>
-    <mat-card-actions *ngIf="isSuccess(document)">
+    <mat-card-actions *ngIf="isSuccess(document)" @displayState>
         <button mat-button
                 mat-raised-button
-                color="accent"
+                color="warn"
                 [translate]="'details' | uppercase"
                 (click)="openDetailsDialog(document)">
         </button>

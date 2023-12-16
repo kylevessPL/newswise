@@ -1,3 +1,3 @@
 # Newswise
 
-An application to automatically classify news articles into different topics.
+An application to automatically classify press articles into different topics.

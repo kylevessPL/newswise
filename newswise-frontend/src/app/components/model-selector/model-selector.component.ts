@@ -1,11 +1,13 @@
-import {Component, EventEmitter, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ModelEnum} from '../../model/model.enum';
 
 @Component({
     selector: 'app-model-selector',
-    templateUrl: './model-selector.component.html'
+    templateUrl: './model-selector.component.html',
+    styleUrl: './model-selector.component.scss'
 })
 export class ModelSelectorComponent {
+    @Input() disabled = false;
     @Output() modelEvent = new EventEmitter<ModelEnum>();
 
     protected readonly model = ModelEnum;

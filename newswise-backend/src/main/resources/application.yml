@@ -108,7 +108,8 @@ spring:
   profiles:
     default: local
   webflux:
+    base-path: /api
     multipart:
       max-disk-usage-per-part: 100MB
       max-in-memory-size: 0MB
-      max-parts: 5
+      max-parts: 8

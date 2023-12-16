@@ -18,6 +18,7 @@ class FileValidationError extends Error {
     styleUrl: './file-upload.component.scss'
 })
 export class FileUploadComponent {
+    @Input() disabled = false;
     @Input() placeholder = 'Choose file';
     @Input() maxCount?: number;
     @Input() maxSizeKb?: number;
@@ -25,7 +26,7 @@ export class FileUploadComponent {
     @Output() fileEvent = new EventEmitter<File[]>();
     @Output() errorEvent = new EventEmitter<[FileUploadError, string?]>();
 
-    @ViewChild('fileUpload') private fileUpload?: ElementRef<HTMLInputElement>;
+    @ViewChild('upload') private upload?: ElementRef<HTMLInputElement>;
 
     protected onFilesSelected = (event: Event) => {
         const files = this.extractFiles(event);
@@ -35,7 +36,7 @@ export class FileUploadComponent {
         } catch (ex) {
             ex instanceof FileValidationError && this.errorEvent.emit([ex.error, ex.filename]);
         }
-        this.fileUpload!.nativeElement.value = '';
+        this.upload!.nativeElement.value = '';
     };
 
     private extractFiles = (event: Event) => {

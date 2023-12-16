@@ -1,6 +1,12 @@
-<button class="file-upload-button" mat-raised-button (click)="fileUpload.click()">
+<button class="file-upload-button" mat-raised-button [disabled]="disabled" (click)="upload.click()">
     {{ placeholder }}
     <mat-icon>upload</mat-icon>
 </button>
 
-<input #fileUpload [hidden]="true" type="file" [accept]="mimeTypes" (change)="onFilesSelected($event)" multiple>
+<input #upload
+       multiple
+       type="file"
+       [hidden]="true"
+       [disabled]="disabled"
+       [accept]="mimeTypes"
+       (change)="onFilesSelected($event)">
