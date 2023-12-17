@@ -32,7 +32,9 @@
             </button>
         </mat-card-actions>
     </mat-card>
-    <app-processing-result *ngIf="documentProcessingData.length" [documents]="documentProcessingData" @displayState>
+    <app-processing-result *ngIf="documentProcessingData.length"
+                           [documents]="documentProcessingData"
+                           [smoothHeight]="documentProcessingData">
     </app-processing-result>
 </main>
 <app-footer></app-footer>

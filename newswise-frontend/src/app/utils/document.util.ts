@@ -4,8 +4,8 @@ import {DocumentProcessingFailure} from '../model/document-processing-failure';
 
 export default class DocumentUtil {
     static isSuccess = (document: DocumentProcessingData): document is DocumentProcessingSuccess =>
-        'predictions' in document;
+        'predictions' in document && document.predictions !== undefined;
 
     static isFailure = (document: DocumentProcessingData): document is DocumentProcessingFailure =>
-        'errorMessage' in document;
+        'errorMessage' in document && document.errorMessage !== undefined;
 }

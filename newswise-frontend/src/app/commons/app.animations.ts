@@ -16,5 +16,11 @@ export const Animations = {
                 style({overflow: 'hidden', height: 0})
             )
         ])
+    ]),
+    smoothHeight: trigger('grow', [
+        transition('void <=> *', []),
+        transition('* <=> *', [style({height: '{{startHeight}}px', opacity: 0}), animate('.5s ease')], {
+            params: {startHeight: 0}
+        })
     ])
 };

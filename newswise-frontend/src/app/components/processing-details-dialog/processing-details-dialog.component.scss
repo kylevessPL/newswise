@@ -1,4 +1,29 @@
-.mat-list-item, .mat-accordion .mat-expansion-panel-header-description {
+:host {
+  display: flex;
+  flex-direction: column;
+}
+
+.grid-value {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-top: 48px;
+}
+
+mat-grid-list {
+  margin-top: 24px;
+}
+
+mat-grid-tile-header {
+  justify-content: center;
+}
+
+mat-accordion {
+  display: flex;
+  flex-direction: column;
+}
+
+.mat-accordion .mat-expansion-panel-header-description {
   justify-content: space-between;
   align-items: center;
 }

@@ -12,6 +12,7 @@ interface Details {
     title: string;
     description: string;
     icon: string;
+    prediction: boolean;
     data: Map<string, string>;
 }
 
@@ -28,14 +29,20 @@ export class ProcessingDetailsDialogComponent {
 
     protected details: Details[];
 
-    private step = 0;
+    private step? = 0;
 
     constructor(@Inject(MAT_DIALOG_DATA) document: DocumentProcessingSuccess) {
         this.details = this.createDetails(document);
     }
 
+    protected noSort = () => 0;
+
     protected open = (index: number) => {
         this.step = index;
+    };
+
+    protected close = () => {
+        this.step = undefined;
     };
 
     protected isOpened = (index: number) => this.step === index;
@@ -44,9 +51,9 @@ export class ProcessingDetailsDialogComponent {
 
     protected isLast = () => this.step === this.details.length - 1;
 
-    protected previous = () => this.step === 0 ? this.step : this.step--;
+    protected previous = () => this.step !== undefined && !this.isFirst() ? this.step-- : 0;
 
-    protected next = () => this.step === this.details.length - 1 ? this.step : this.step++;
+    protected next = () => this.step !== undefined && !this.isLast() ? this.step++ : this.step ?? 0;
 
     private createDetails = (document: DocumentProcessingSuccess) => {
         const predictions = this.processPredictions(document.predictions);
@@ -62,6 +69,7 @@ export class ProcessingDetailsDialogComponent {
             title: 'topic-predicitons',
             description: 'prediction-distribution-for-all-press-article-topics',
             icon: 'psychology_alt',
+            prediction: true,
             data
         } as Details;
     };
@@ -86,20 +94,23 @@ export class ProcessingDetailsDialogComponent {
             title: 'general-metadata',
             description: 'general-document-information',
             icon: 'info',
+            prediction: false,
             data: generalProperties
         };
         const textMetadata: Details = {
             title: 'text-metadata',
             description: 'text-document-information',
             icon: 'article',
+            prediction: false,
             data: textProperties
         };
         const imageMetadata: Details = {
             title: 'image-metadata',
             description: 'image-document-information',
             icon: 'image',
+            prediction: false,
             data: imageProperties
         };
-        return [generalMetadata, textMetadata, imageMetadata];
+        return [generalMetadata, textMetadata, imageMetadata].filter(details => details.data.size !== 0);
     };
 }

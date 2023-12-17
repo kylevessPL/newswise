@@ -1,35 +1,27 @@
 <mat-card *ngFor="let document of documents | filterPipe: null">
+    <button *ngIf="isSuccess(document)"
+            mat-icon-button
+            class="details-btn"
+            [attr.aria-label]="'show-details' | translate"
+            [disableRipple]="true"
+            [matTooltip]="'show-details' | translate"
+            (click)="openDetailsDialog(document)">
+        <mat-icon class="material-symbols-outlined">quick_reference</mat-icon>
+    </button>
     <mat-card-header>
         <mat-card-title>
-            <img *ngIf="!isProcessing(document); else processing"
-                 draggable="false"
-                 width="145"
-                 height="194"
-                 class="disable-select"
-                 [ngSrc]="documentIcon(document)"
-                 [alt]="'document-icon' | translate">
-            <ng-template #processing>
-                <!--                <app-animation [path]="documentIcon(document)" [viewBox]="[0, 0, 1920, 1080]">-->
-                <!--                </app-animation>-->
-            </ng-template>
+            <app-document [success]="documentState(document)"></app-document>
+            <mat-spinner *ngIf="isProcessing(document)" diameter="60"></mat-spinner>
         </mat-card-title>
         <mat-card-subtitle>
             <div>{{ document.resource | resourcePipe }}</div>
         </mat-card-subtitle>
     </mat-card-header>
-    <mat-card-content *ngIf="isSuccess(document) || isFailure(document)">
+    <mat-card-content *ngIf="isSuccess(document) || isFailure(document)" @displayState>
         <span *ngIf="isSuccess(document)" [translate]="extractTopic(document)" class="result success">
         </span>
         <span *ngIf="isFailure(document)" [translate]="extractError(document)" class="result failure">
         </span>
-        <mat-divider *ngIf="isSuccess(document)"></mat-divider>
+        <mat-divider></mat-divider>
     </mat-card-content>
-    <mat-card-actions *ngIf="isSuccess(document)" @displayState>
-        <button mat-button
-                mat-raised-button
-                color="warn"
-                [translate]="'details' | uppercase"
-                (click)="openDetailsDialog(document)">
-        </button>
-    </mat-card-actions>
 </mat-card>

@@ -1,13 +1,12 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {ACCEPTED_MIME_TYPES, MAX_FILE_COUNT, MAX_FILE_SIZE_KB} from './commons/app.constants';
 import {FileUploadError} from './model/file-upload.error';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import UnitUtil from './utils/unit.util';
 import {Animations} from './commons/app.animations';
 import {ProcessingService} from './services/processing.service';
-import {finalize, Observable, Subscription} from 'rxjs';
+import {finalize, Observable} from 'rxjs';
 import {LocalizationService} from './services/localization.service';
-import {GlobalService} from './services/global.service';
 import {DocumentProcessingData} from './model/document-processing-data';
 import {DocumentProcessingFailure} from './model/document-processing-failure';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -17,9 +16,9 @@ import {ModelEnum} from './model/model.enum';
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrl: './app.component.scss',
-    animations: [Animations.displayState]
+    animations: [Animations.smoothHeight]
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent {
     protected readonly maxFileCount = MAX_FILE_COUNT;
     protected readonly maxFileSize = MAX_FILE_SIZE_KB;
     protected readonly acceptedFileMimeTypes = ACCEPTED_MIME_TYPES;
@@ -36,20 +35,9 @@ export class AppComponent implements OnInit, OnDestroy {
         return this.processCall && this.documentProcessingData.at(-1) !== null;
     }
 
-    private httpErrorSubscription?: Subscription;
-
     constructor(private processingService: ProcessingService,
                 private localizationService: LocalizationService,
-                private globalService: GlobalService,
                 private snackBar: MatSnackBar) {
-    }
-
-    ngOnInit() {
-        this.httpErrorSubscription = this.globalService.httpError.subscribe(() => this.handleHttpError());
-    }
-
-    ngOnDestroy() {
-        this.httpErrorSubscription?.unsubscribe();
     }
 
     protected onFilesLoaded = async (files: File[]) => {
@@ -79,17 +67,12 @@ export class AppComponent implements OnInit, OnDestroy {
             .subscribe({
                 next: data => {
                     const index = !urlDocument ? Number(data.name) : 0;
-                    const doc = this.documentProcessingData[index];
-                    this.documentProcessingData[index] = {...doc, ...data};
+                    const doc = this.documentProcessingData[index]!!;
+                    Object.assign(doc, data);
                 },
-                error: (error?: HttpErrorResponse) => {
-                    if (!urlDocument) {
-                        this.handleHttpError();
-                    } else if (error?.status === 400) {
-                        const doc = this.documentProcessingData[0] as DocumentProcessingFailure;
-                        doc.errorMessage = error?.error.message;
-                    }
-                }
+                error: (error?: HttpErrorResponse) => this.documentProcessingData.filter(doc => doc !== null).forEach(doc => {
+                    (doc as DocumentProcessingFailure).errorMessage = error?.error?.message;
+                })
             });
     };
 
@@ -118,11 +101,4 @@ export class AppComponent implements OnInit, OnDestroy {
     };
 
     private initDocumentProcessingData = (filename?: string | URL) => ({resource: filename} as DocumentProcessingData);
-
-    private handleHttpError = () => {
-        (async () => {
-            const message = await this.localizationService.translate('sorry-something-went-wrong');
-            this.snackBar.open(message, 'OK');
-        })();
-    };
 }

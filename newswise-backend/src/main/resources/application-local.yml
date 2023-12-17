@@ -3,4 +3,4 @@ app:
   config:
     cors:
       allowed-origins:
-        - "http://localhost:${server.port}"
+        - "http://localhost:4200"

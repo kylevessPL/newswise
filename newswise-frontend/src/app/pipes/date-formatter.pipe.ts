@@ -5,7 +5,7 @@ import moment from 'moment';
 @Pipe({name: 'dateFormatterPipe'})
 export class DateFormatterPipe implements PipeTransform {
     transform(value: string): string {
-        const date = moment(value);
+        const date = moment(value, 'YYYY-MM-DDTHH:mm:ssZ', true);
         return date.isValid() ? date.format(DATETIME_FORMAT) : value;
     }
 }

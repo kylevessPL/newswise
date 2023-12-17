@@ -11,13 +11,10 @@ import {TextDividerComponent} from './components/text-divider/text-divider.compo
 import {FileUploadComponent} from './components/file-upload/file-upload.component';
 import {MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule} from '@angular/material/snack-bar';
 import {ResourcePipe} from './pipes/resource.pipe';
-import {LottieCacheModule, LottieModule} from 'ngx-lottie';
-import {AnimationComponent} from './components/animation/animation.component';
 import {MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule} from '@angular/material/dialog';
 import {DatePipe, NgOptimizedImage} from '@angular/common';
 import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
 import {HttpErrorInterceptor} from './config/interceptors/http-error.interceptor';
-import player from 'lottie-web/build/player/lottie_svg';
 import {MissingTranslationHandler, TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {FooterComponent} from './components/footer/footer.component';
@@ -38,6 +35,10 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import {MatListModule} from '@angular/material/list';
 import {DateFormatterPipe} from './pipes/date-formatter.pipe';
 import {FilterPipe} from './pipes/filter.pipe';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {SmoothHeightDirective} from './directives/smooth-height.directive';
+import {DocumentComponent} from './components/document/document.component';
+import {MatGridListModule} from '@angular/material/grid-list';
 
 export function iconsInitializerFactory(iconsService: IconsService) {
     return () => iconsService.initialize();
@@ -62,10 +63,11 @@ export function httpLoaderFactory(http: HttpClient) {
         TextDividerComponent,
         UrlInputComponent,
         FileUploadComponent,
+        DocumentComponent,
+        SmoothHeightDirective,
         ProcessingDetailsDialogComponent,
         ModelSelectorComponent,
-        ProcessingResultComponent,
-        AnimationComponent
+        ProcessingResultComponent
     ],
     imports: [
         BrowserModule,
@@ -90,10 +92,6 @@ export function httpLoaderFactory(http: HttpClient) {
                 deps: [HttpClient]
             }
         }),
-        LottieModule.forRoot({
-            player: () => player,
-        }),
-        LottieCacheModule.forRoot(),
         MatFormFieldModule,
         MatSelectModule,
         ReactiveFormsModule,
@@ -101,7 +99,9 @@ export function httpLoaderFactory(http: HttpClient) {
         MatProgressSpinnerModule,
         MatChipsModule,
         MatExpansionModule,
-        MatListModule
+        MatListModule,
+        MatTooltipModule,
+        MatGridListModule
     ],
     providers: [
         DatePipe,
@@ -133,8 +133,7 @@ export function httpLoaderFactory(http: HttpClient) {
             useValue: {
                 autoFocus: true,
                 enterAnimationDuration: 450,
-                exitAnimationDuration: 250,
-                maxWidth: '50vw'
+                exitAnimationDuration: 250
             }
         },
         {

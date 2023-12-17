@@ -37,6 +37,27 @@ mat-card {
   text-align: center;
 }
 
+mat-list-item {
+  height: initial !important;
+
+  .mat-mdc-list-item-title {
+    text-align: justify;
+    font-weight: 500;
+  }
+
+  .mat-mdc-list-item-line {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    text-align: justify;
+  }
+}
+
+.details-btn {
+  .mat-mdc-button-persistent-ripple, .mat-mdc-button-ripple {
+    display: none;
+  }
+}
+
 .mat-mdc-card-header-text {
   margin: 0;
 }

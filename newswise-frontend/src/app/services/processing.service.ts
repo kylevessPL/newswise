@@ -5,7 +5,7 @@ import {restUrl} from '../../environments/rest-url';
 import {defer, finalize, first, map, Observable, Subject} from 'rxjs';
 import {DocumentProcessingSuccess} from '../model/document-processing-success';
 import {DocumentProcessingData} from '../model/document-processing-data';
-import {EventStreamContentType, fetchEventSource} from '@microsoft/fetch-event-source';
+import {fetchEventSource} from '@microsoft/fetch-event-source';
 import {EventEnum} from '../model/event.enum';
 import {DocumentProcessingFailure} from '../model/document-processing-failure';
 import {ModelEnum} from '../model/model.enum';
@@ -50,12 +50,12 @@ export class ProcessingService {
         fetchEventSource(`${environment.apiUrl}/${restUrl.processing}/${model}/${restUrl.files}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'multipart/form-data',
+                'Accept': '*/*'
             },
             body: data,
             signal: controller.signal,
             async onopen(response) {
-                if (!response.ok || response.headers.get('content-type') !== EventStreamContentType) {
+                if (!response.ok || response.headers.get('content-type') !== 'text/event-stream;charset=UTF-8') {
                     throw new ResponseError(response);
                 }
             },
@@ -75,13 +75,8 @@ export class ProcessingService {
                 throw new ClosedConnectionError();
             },
             onerror(err) {
-                console.error('Error processing files');
-                if (err instanceof ResponseError) {
-                    console.error(err.response);
-                } else if (err instanceof Error) {
-                    console.error(err);
-                }
                 results.error(err);
+                throw err;
             }
         }).then();
         return results.pipe(map(this.mapResponse), finalize(() => controller.abort()));
@@ -92,6 +87,7 @@ export class ProcessingService {
         metadata: this.isSuccess(x) ? this.createMap(x.metadata) : undefined,
         predictions: this.isSuccess(x) ? this.createMap(x.predictions) : undefined
     } as DocumentProcessingSuccess);
+
 
     private createMap = (data: Map<string, number>) => data !== undefined
         ? new Map(Object.entries(data))
