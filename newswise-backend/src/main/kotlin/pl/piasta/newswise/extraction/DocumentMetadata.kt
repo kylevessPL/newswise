@@ -6,7 +6,6 @@ import java.time.Instant
 import kotlin.reflect.KClass
 import org.apache.tika.metadata.Office
 import org.apache.tika.metadata.PDF
-import org.apache.tika.metadata.Property
 import org.apache.tika.metadata.TIFF
 import org.apache.tika.metadata.TikaCoreProperties
 
@@ -21,42 +20,60 @@ enum class ImageOrientation {
     LEFT_BOTTOM
 }
 
-enum class ImageResolutionUnit { INCHES, CENTIMETRES }
+enum class ImageResolutionUnit { INCH, CM }
 
-enum class DocumentMetadata(val type: KClass<*>, vararg val property: Property) {
-    TITLE(String::class, TikaCoreProperties.TITLE),
-    DESCRIPTION(String::class, TikaCoreProperties.DESCRIPTION),
-    SUBJECT(String::class, PDF.DOC_INFO_SUBJECT),
-    KEYWORDS(String::class, Office.KEYWORDS, PDF.DOC_INFO_KEY_WORDS),
-    CREATOR(String::class, TikaCoreProperties.CREATOR),
-    INITIAL_CREATOR(String::class, Office.INITIAL_AUTHOR),
-    CREATION_DATE(Instant::class, TikaCoreProperties.CREATED),
-    MODIFIER(String::class, TikaCoreProperties.MODIFIER),
-    MODIFICATION_DATE(Instant::class, TikaCoreProperties.MODIFIED),
-    CONTRIBUTOR(String::class, TikaCoreProperties.CONTRIBUTOR),
-    PUBLISHER(String::class, TikaCoreProperties.PUBLISHER),
-    PAGE_COUNT(Int::class, Office.PAGE_COUNT),
-    PARAGRAPH_COUNT(Int::class, Office.PARAGRAPH_COUNT),
-    CHARACTER_COUNT(Int::class, Office.CHARACTER_COUNT),
-    CHARACTER_COUNT_WITH_SPACES(Int::class, Office.CHARACTER_COUNT_WITH_SPACES),
-    WORD_COUNT(Int::class, Office.WORD_COUNT),
-    LINE_COUNT(Int::class, Office.LINE_COUNT),
-    TABLE_COUNT(Int::class, Office.TABLE_COUNT),
-    IMAGE_COUNT(Int::class, Office.IMAGE_COUNT, TikaCoreProperties.NUM_IMAGES),
-    BITS_PER_SAMPLE(Int::class, TIFF.BITS_PER_SAMPLE),
-    IMAGE_HEIGHT(Int::class, TIFF.IMAGE_LENGTH),
-    IMAGE_WIDTH(Int::class, TIFF.IMAGE_WIDTH),
-    SAMPLES_PER_PIXEL(Int::class, TIFF.SAMPLES_PER_PIXEL),
-    FLASH_FIRED(Boolean::class, TIFF.FLASH_FIRED),
-    EXPOSURE_TIME(Double::class, TIFF.EXPOSURE_TIME),
-    F_NUMBER(Double::class, TIFF.F_NUMBER),
-    FOCAL_LENGTH(Double::class, TIFF.FOCAL_LENGTH),
-    ISO_SPEED_RATINGS(Int::class, TIFF.ISO_SPEED_RATINGS),
-    EQUIPMENT_MAKE(String::class, TIFF.EQUIPMENT_MAKE),
-    EQUIPMENT_MODEL(String::class, TIFF.EQUIPMENT_MODEL),
-    SOFTWARE(String::class, TIFF.SOFTWARE),
-    ORIENTATION(ImageOrientation::class, TIFF.ORIENTATION),
-    RESOLUTION_HORIZONTAL(Double::class, TIFF.RESOLUTION_HORIZONTAL),
-    RESOLUTION_VERTICAL(Double::class, TIFF.RESOLUTION_VERTICAL),
-    RESOLUTION_UNIT(ImageResolutionUnit::class, TIFF.RESOLUTION_UNIT)
+enum class DocumentMetadata(
+    val type: KClass<*>,
+    vararg val property: String,
+    val customMapper: ((String) -> Any?)? = null
+) {
+    TITLE(String::class, TikaCoreProperties.TITLE.name, "Exif IFD0:Windows XP Title"),
+    DESCRIPTION(String::class, TikaCoreProperties.DESCRIPTION.name, "Exif IFD0:Image Description"),
+    COMMENT(String::class, "Exif IFD0:Windows XP Comment", TikaCoreProperties.COMMENTS.name),
+    SUBJECT(String::class, TikaCoreProperties.SUBJECT.name, "Exif IFD0:Windows XP Subject"),
+    KEYWORDS(String::class, Office.KEYWORDS.name, PDF.DOC_INFO_KEY_WORDS.name, "Exif IFD0:Windows XP Keywords"),
+    CREATOR(String::class, TikaCoreProperties.CREATOR.name, "Exif IFD0:Artist", "Exif IFD0:Windows XP Author"),
+    INITIAL_CREATOR(String::class, Office.INITIAL_AUTHOR.name),
+    CREATION_DATE(
+        Instant::class,
+        TikaCoreProperties.CREATED.name,
+        "Exif SubIFD:Date/Time Original",
+        "Exif SubIFD:Date/Time Digitized"
+    ),
+    MODIFIER(String::class, TikaCoreProperties.MODIFIER.name),
+    MODIFICATION_DATE(Instant::class, TikaCoreProperties.MODIFIED.name, "File Modified Date"),
+    CONTRIBUTOR(String::class, TikaCoreProperties.CONTRIBUTOR.name),
+    PUBLISHER(String::class, TikaCoreProperties.PUBLISHER.name),
+    PAGE_COUNT(Int::class, Office.PAGE_COUNT.name),
+    PARAGRAPH_COUNT(Int::class, Office.PARAGRAPH_COUNT.name),
+    CHARACTER_COUNT(Int::class, Office.CHARACTER_COUNT.name),
+    CHARACTER_COUNT_WITH_SPACES(Int::class, Office.CHARACTER_COUNT_WITH_SPACES.name),
+    WORD_COUNT(Int::class, Office.WORD_COUNT.name),
+    LINE_COUNT(Int::class, Office.LINE_COUNT.name),
+    TABLE_COUNT(Int::class, Office.TABLE_COUNT.name),
+    IMAGE_COUNT(Int::class, Office.IMAGE_COUNT.name, TikaCoreProperties.NUM_IMAGES.name),
+    BITS_PER_SAMPLE(Int::class, TIFF.BITS_PER_SAMPLE.name),
+    IMAGE_HEIGHT(Int::class, TIFF.IMAGE_LENGTH.name),
+    IMAGE_WIDTH(Int::class, TIFF.IMAGE_WIDTH.name),
+    SAMPLES_PER_PIXEL(Int::class, TIFF.SAMPLES_PER_PIXEL.name),
+    FLASH_FIRED(Boolean::class, TIFF.FLASH_FIRED.name, "Exif SubIFD:Flash", customMapper = ::mapFlashFired),
+    EXPOSURE_TIME(Double::class, TIFF.EXPOSURE_TIME.name),
+    F_NUMBER(Double::class, TIFF.F_NUMBER.name),
+    FOCAL_LENGTH(Double::class, TIFF.FOCAL_LENGTH.name),
+    ISO_SPEED_RATINGS(Int::class, TIFF.ISO_SPEED_RATINGS.name),
+    EQUIPMENT_MAKE(String::class, TIFF.EQUIPMENT_MAKE.name, "Exif IFD0:Make"),
+    EQUIPMENT_MODEL(String::class, TIFF.EQUIPMENT_MODEL.name, "Exif IFD0:Model"),
+    SOFTWARE(String::class, TIFF.SOFTWARE.name),
+    ORIENTATION(ImageOrientation::class, TIFF.ORIENTATION.name, customMapper = ::mapOrientation),
+    RESOLUTION_HORIZONTAL(Double::class, TIFF.RESOLUTION_HORIZONTAL.name),
+    RESOLUTION_VERTICAL(Double::class, TIFF.RESOLUTION_VERTICAL.name),
+    RESOLUTION_UNIT(ImageResolutionUnit::class, TIFF.RESOLUTION_UNIT.name, "Resolution Units")
 }
+
+fun mapFlashFired(value: String): Any? = value.toBooleanStrictOrNull()?.let {
+    value.takeIf { it == "Flash fired" }
+}
+
+fun mapOrientation(value: String): Any? = value.toIntOrNull()?.minus(1)?.runCatching {
+    ImageOrientation.entries[this]
+}?.getOrNull()

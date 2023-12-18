@@ -7,6 +7,6 @@ export enum ImagePropertyEnum {
     RIGHT_TOP = 'right-top',
     RIGHT_BOTTOM = 'right-bottom',
     LEFT_BOTTOM = 'left-bottom',
-    INCHES = 'inches',
-    CENTIMETRES = 'centimetres'
+    INCH = 'inches',
+    CM = 'centimetres'
 }

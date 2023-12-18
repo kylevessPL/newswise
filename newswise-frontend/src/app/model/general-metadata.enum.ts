@@ -1,6 +1,7 @@
 export enum GeneralMetadataEnum {
     TITLE = 'title',
     DESCRIPTION = 'description',
+    COMMENT = 'comment',
     SUBJECT = 'subject',
     KEYWORDS = 'keywords',
     CREATOR = 'creator',

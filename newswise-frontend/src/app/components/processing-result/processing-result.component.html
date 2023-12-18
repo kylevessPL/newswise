@@ -11,7 +11,7 @@
     </button>
     <mat-card-header>
         <mat-card-title>
-            <app-document [success]="documentState(document)"></app-document>
+            <app-document class="disable-select" [success]="documentState(document)"></app-document>
             <mat-spinner *ngIf="isProcessing(document)" diameter="60"></mat-spinner>
         </mat-card-title>
         <mat-card-subtitle>

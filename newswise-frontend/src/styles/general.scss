@@ -15,11 +15,29 @@ body {
   pointer-events: none;
 }
 
+.language-select {
+  .mat-mdc-select-arrow {
+    color: white;
+  }
+
+  .mdc-notched-outline > * {
+    border-color: white !important;
+  }
+}
+
 .card-item-flex {
   display: flex;
   justify-content: center;
   margin-top: 15px;
   margin-bottom: 15px;
+}
+
+.cdk-global-scrollblock {
+  overflow-y: hidden !important;
+}
+
+.mdc-dialog__content {
+  scrollbar-gutter: stable both-edges;
 }
 
 mat-label {

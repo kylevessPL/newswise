@@ -15,8 +15,12 @@ import java.nio.file.DirectoryNotEmptyException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset.UTC
+import java.time.format.DateTimeFormatter
 import java.util.Properties
 import kotlin.io.path.Path
+import kotlin.reflect.KClass
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.DEFAULT_CONCURRENCY
@@ -205,14 +209,37 @@ fun Map<String, Any>.toStringProperties() = mapValues { (_, value) -> value.toSt
 fun <K, V> Map<K, V>.firstOrNull(predicate: (K) -> Boolean) = filterKeys(predicate).values.firstOrNull()
 
 /**
- * Convert the string representation to an Instant or return null if the conversion fails.
+ * Convert the string representation to an [Instant] or return null if the conversion fails.
+ * The function first attempts to parse the string as an [Instant]. If that fails, it attempts to handle
+ * cases where the string representation lacks the 'Z' UTC designator. If both attempts fail,
+ * it uses a custom formatter specified by the 'fallback' parameter as a last resort.
  *
- * @return The Instant parsed from the string, or null if the conversion fails.
+ * @param fallback The pattern of the custom formatter to use if all other conversion attempts fail.
+ * @return The [Instant] parsed from the string, or null if all conversion attempts fail.
  */
-fun String.toInstantOrNull(): Instant? {
-    val date = if (endsWith('Z')) this else "${this}Z"
-    return runCatching { Instant.parse(date) }.getOrNull()
+fun String.toInstantOrNull(fallback: String): Instant? {
+    fun parseZonedDateTime(formatter: DateTimeFormatter) = runCatching {
+        LocalDateTime.parse(this, formatter).atZone(UTC).toInstant()
+    }.getOrNull()
+    return runCatching {
+        val date = if (endsWith('Z')) this else "${this}Z"
+        Instant.parse(date)
+    }.getOrElse {
+        val formatter = DateTimeFormatter.ofPattern(fallback)
+        parseZonedDateTime(formatter)
+    }
 }
+
+/**
+ * Convert the string representation to an enum constant of the specified enum class.
+ *
+ * @param clazz The [Enum] class to which the [String] should be converted.
+ * @return The [Enum] constant of type [T] parsed from the [String], or null if the conversion fails.
+ */
+@Suppress("UNCHECKED_CAST")
+fun <T : Any> String.toEnumOrNull(clazz: KClass<T>) = runCatching {
+    (clazz as KClass<Enum<*>>).java.enumConstants?.firstOrNull { it.name == uppercase() }
+}.getOrNull()
 
 /**
  * Get the root cause of a [Throwable].
