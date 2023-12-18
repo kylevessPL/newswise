@@ -49,9 +49,6 @@ export class ProcessingService {
         let controller = new AbortController();
         fetchEventSource(`${environment.apiUrl}/${restUrl.processing}/${model}/${restUrl.files}`, {
             method: 'POST',
-            headers: {
-                'Accept': '*/*'
-            },
             body: data,
             signal: controller.signal,
             openWhenHidden: true,
