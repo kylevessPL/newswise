@@ -11,6 +11,7 @@
         <mat-card-content>
             <app-url-input class="card-item-flex"
                            [disabled]="!configurationEnabled"
+                           [clearUrl]="clearUrl.asObservable()"
                            (urlEvent)="onUrlLoaded($event)">
             </app-url-input>
             <app-text-divider [text]="'or' | translate"></app-text-divider>

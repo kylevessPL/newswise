@@ -87,7 +87,7 @@ export class ProcessingDetailsDialogComponent {
                     textProperties.set(EnumUtil.getEnumValue(TextMetadataEnum, key)!!, value);
                 } else if (this.imageMetadataKeys.includes(key)) {
                     const property = EnumUtil.getEnumValue(ImagePropertyEnum, value) ?? value;
-                    imageProperties.set(key, property);
+                    imageProperties.set(EnumUtil.getEnumValue(ImageMetadataEnum, key)!!, property);
                 }
             });
         const generalMetadata: Details = {

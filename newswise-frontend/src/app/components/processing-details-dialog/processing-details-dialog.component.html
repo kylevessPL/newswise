@@ -9,21 +9,21 @@
                     {{ detail.title | translate }}
                 </mat-panel-title>
                 <mat-panel-description>
-                    {{ detail.description | translate }}
-                    <mat-icon>{{ detail.icon }}</mat-icon>
+                    <div class="panel-description">{{ detail.description | translate }}</div>
+                    <mat-icon [fontIcon]="detail.icon"></mat-icon>
                 </mat-panel-description>
             </mat-expansion-panel-header>
-            <mat-list *ngIf="!detail.prediction; else prediciton" role="list">
+            <mat-list *ngIf="!detail.prediction; else prediction" role="list">
                 <mat-list-item *ngFor="let item of detail.data | keyvalue: noSort" role="listitem">
                     <strong matListItemTitle>{{ item.key | translate }}</strong>
-                    <span matListItemLine>{{ item.value | dateFormatterPipe | translate }}</span>
+                    <span matListItemLine>{{ item.value | boolFormatterPipe | dateFormatterPipe | translate }}</span>
                 </mat-list-item>
             </mat-list>
-            <ng-template #prediciton>
+            <ng-template #prediction>
                 <mat-grid-list cols="3" rowHeight="96px">
                     <mat-grid-tile *ngFor="let item of detail.data | keyvalue: noSort">
                         <mat-grid-tile-header>{{ item.key | translate }}</mat-grid-tile-header>
-                        <span class="grid-value">{{ item.value | dateFormatterPipe | translate }}</span>
+                        <span class="grid-value">{{ item.value | translate }}</span>
                     </mat-grid-tile>
                 </mat-grid-list>
             </ng-template>

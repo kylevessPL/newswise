@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import normalizeUrl from 'normalize-url';
-import {Subscription} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 
 @Component({
     selector: 'app-url-input',
@@ -10,10 +10,12 @@ import {Subscription} from 'rxjs';
 })
 export class UrlInputComponent implements OnInit, OnChanges, OnDestroy {
     @Input() disabled = false;
+    @Input() clearUrl: Observable<void>;
     @Output() urlEvent = new EventEmitter<URL>();
 
     protected form: FormGroup;
 
+    private clearSubscription: Subscription;
     private changeSubscription?: Subscription;
 
     private get url() {
@@ -27,6 +29,7 @@ export class UrlInputComponent implements OnInit, OnChanges, OnDestroy {
         this.form = this.fb.group({
             url: '',
         }, {updateOn: 'submit'});
+        this.clearSubscription = this.clearUrl.subscribe(() => this.form.reset());
         this.changeSubscription = this.url?.valueChanges.subscribe(value => this.setValue(value));
     }
 
@@ -35,6 +38,7 @@ export class UrlInputComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     ngOnDestroy() {
+        this.clearSubscription.unsubscribe();
         this.changeSubscription?.unsubscribe();
     }
 

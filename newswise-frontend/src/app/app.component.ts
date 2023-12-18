@@ -5,7 +5,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import UnitUtil from './utils/unit.util';
 import {Animations} from './commons/app.animations';
 import {ProcessingService} from './services/processing.service';
-import {finalize, Observable} from 'rxjs';
+import {finalize, Observable, Subject} from 'rxjs';
 import {LocalizationService} from './services/localization.service';
 import {DocumentProcessingData} from './model/document-processing-data';
 import {DocumentProcessingFailure} from './model/document-processing-failure';
@@ -25,6 +25,7 @@ export class AppComponent {
 
     protected documentProcessingData: (DocumentProcessingData | null)[] = [];
     protected processCall?: (mode: ModelEnum) => Observable<DocumentProcessingData>;
+    protected clearUrl = new Subject<void>();
     protected model: ModelEnum;
 
     protected get configurationEnabled() {
@@ -41,6 +42,7 @@ export class AppComponent {
     }
 
     protected onFilesLoaded = async (files: File[]) => {
+        this.clearUrl.next();
         this.documentProcessingData = files.map(file => this.initDocumentProcessingData(file.name));
         this.processCall = model => this.processingService.processFiles(model, files);
     };

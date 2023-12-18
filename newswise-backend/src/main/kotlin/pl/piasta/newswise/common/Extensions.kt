@@ -209,7 +209,10 @@ fun <K, V> Map<K, V>.firstOrNull(predicate: (K) -> Boolean) = filterKeys(predica
  *
  * @return The Instant parsed from the string, or null if the conversion fails.
  */
-fun String.toInstantOrNull(): Instant? = runCatching { Instant.parse(this) }.getOrNull()
+fun String.toInstantOrNull(): Instant? {
+    val date = if (endsWith('Z')) this else "${this}Z"
+    return runCatching { Instant.parse(date) }.getOrNull()
+}
 
 /**
  * Get the root cause of a [Throwable].
@@ -230,14 +233,6 @@ suspend inline fun <reified T : ServerRequest> T.validateAndAwait(noinline handl
     validate.requestAndAwait(this) {
         handler()
     }
-
-/**
- * Returns a list containing only the non-blank results of applying the given [transform] function
- * to each element in the original array.
- *
- */
-inline fun <T> Array<T>.mapNotBlank(transform: (T) -> String?) =
-    mapNotNull(transform).filterNot { it.isBlank() }
 
 /**
  * Deletes the file if it exists.

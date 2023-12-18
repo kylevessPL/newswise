@@ -46,7 +46,7 @@ export class ProcessingService {
 
     private processFileEvents = (model: ModelEnum, data: FormData): Observable<DocumentProcessingData> => defer(() => {
         const results = new Subject<DocumentProcessingData>();
-        const controller = new AbortController();
+        let controller = new AbortController();
         fetchEventSource(`${environment.apiUrl}/${restUrl.processing}/${model}/${restUrl.files}`, {
             method: 'POST',
             headers: {
@@ -54,6 +54,7 @@ export class ProcessingService {
             },
             body: data,
             signal: controller.signal,
+            openWhenHidden: true,
             async onopen(response) {
                 if (!response.ok || response.headers.get('content-type') !== 'text/event-stream;charset=UTF-8') {
                     throw new ResponseError(response);
@@ -75,6 +76,7 @@ export class ProcessingService {
                 throw new ClosedConnectionError();
             },
             onerror(err) {
+                console.error(err);
                 results.error(err);
                 throw err;
             }

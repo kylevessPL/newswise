@@ -39,6 +39,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {SmoothHeightDirective} from './directives/smooth-height.directive';
 import {DocumentComponent} from './components/document/document.component';
 import {MatGridListModule} from '@angular/material/grid-list';
+import {BoolFormatterPipe} from './pipes/bool-formatter.pipe';
 
 export function iconsInitializerFactory(iconsService: IconsService) {
     return () => iconsService.initialize();
@@ -54,6 +55,7 @@ export function httpLoaderFactory(http: HttpClient) {
 
 @NgModule({
     declarations: [
+        BoolFormatterPipe,
         DateFormatterPipe,
         ResourcePipe,
         FilterPipe,

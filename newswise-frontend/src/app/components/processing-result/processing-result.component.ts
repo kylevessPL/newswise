@@ -51,7 +51,7 @@ export class ProcessingResultComponent {
         return EnumUtil.getEnumValue(DocumentCategoryEnum, prediction)!!;
     };
 
-    protected extractError = (document: DocumentProcessingFailure): string =>
+    protected extractError = (document: DocumentProcessingFailure) =>
         EnumUtil.getEnumValue(DocumentProcessingError, document.errorMessage) ?? 'unexpected-error';
 
     protected openDetailsDialog = (document: DocumentProcessingData) =>

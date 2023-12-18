@@ -18,9 +18,27 @@ mat-grid-tile-header {
   justify-content: center;
 }
 
+mat-expansion-panel-header {
+  height: 100% !important;
+}
+
+mat-panel-title, mat-panel-description {
+  flex-basis: unset;
+  height: 48px !important;
+
+  mat-icon {
+    margin-left: 16px;
+  }
+}
+
 mat-accordion {
   display: flex;
   flex-direction: column;
+}
+
+.panel-description {
+  flex-grow: 1;
+  flex-basis: 0;
 }
 
 .mat-accordion .mat-expansion-panel-header-description {
