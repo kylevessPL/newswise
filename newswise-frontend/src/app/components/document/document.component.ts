@@ -17,9 +17,9 @@ export class DocumentComponent implements OnChanges {
 
     protected get icon() {
         if (this.success) {
-            return `${IMAGES_DIR}/document-success.svg?${this.date.getTime()}`;
+            return `${IMAGES_DIR}/document-success.svg`;
         } else if (this.success === false) {
-            return `${IMAGES_DIR}/document-failure.svg?${this.date.getTime()}`;
+            return `${IMAGES_DIR}/document-failure.svg`;
         } else {
             return `${IMAGES_DIR}/document.svg`;
         }
