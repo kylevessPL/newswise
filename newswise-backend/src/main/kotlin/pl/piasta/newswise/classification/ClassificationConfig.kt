@@ -19,6 +19,8 @@ import pl.piasta.newswise.classification.opennlp.OpenNLPBERTNewsArticleClassifie
 import pl.piasta.newswise.classification.opennlp.OpenNLPHelper
 import pl.piasta.newswise.classification.opennlp.OpenNLPMENewsArticleClassifier
 import pl.piasta.newswise.classification.opennlp.OpenNLPProperties
+import pl.piasta.newswise.classification.opennlp.OpenNLPTokenizer
+import pl.piasta.newswise.classification.opennlp.TokenizerMEWrapper
 import pl.piasta.newswise.classification.processing.CoreNLPTextProcessor
 import pl.piasta.newswise.classification.processing.EnglishContractionsExpander
 import pl.piasta.newswise.classification.processing.ProcessingProperties
@@ -71,8 +73,9 @@ val classificationConfig = beans {
         )
         StanfordCoreNLP(nlpProperties.toStringProperties())
     }
-    bean<TokenizerModel>(isLazyInit = true) {
-        DownloadUtil.downloadModel("en", TOKENIZER, TokenizerModel::class.java)
+    bean<OpenNLPTokenizer>(isLazyInit = true) {
+        val model = DownloadUtil.downloadModel("en", TOKENIZER, TokenizerModel::class.java)
+        TokenizerMEWrapper(model)
     }
     bean<DocumentCategorizerDL>(isLazyInit = true) {
         val properties = ref<ClassificationProperties>().openNLP.dl
