@@ -1,5 +1,8 @@
 # noinspection SpringBootApplicationYaml
 app:
+  classification:
+    corenlp:
+      max-threads: 8
   config:
     cors:
       allowed-origins:
