@@ -48,8 +48,8 @@ val classificationConfig = beans {
     bean<EnglishContractionsExpander>()
     bean<CoreNLPProperties> { ref<ClassificationProperties>().coreNLP }
     bean<StanfordCoreNLP> {
-        val properties = ref<ClassificationProperties>().processing
-        val stopwords = ref<ResourceLoader>().absolutePathString(properties.stopwords)!!
+        val properties = ref<ClassificationProperties>()
+        val stopwords = ref<ResourceLoader>().absolutePathString(properties.processing.stopwords)!!
         val annotators = listOf("tokenize", "ssplit", "pos", "lemma", "stopwords")
         val tokenizerOptions = mapOf(
             "quotes" to "ascii",
@@ -62,6 +62,7 @@ val classificationConfig = beans {
             "strictTreebank3" to true
         )
         val nlpProperties = mapOf(
+            "threads" to properties.coreNLP.maxThreads,
             "annotators" to annotators.joinToString(),
             "customAnnotatorClass.stopwords" to StopWordsAnnotator::class.qualifiedName!!,
             "tokenize.options" to tokenizerOptions.joinToString(),

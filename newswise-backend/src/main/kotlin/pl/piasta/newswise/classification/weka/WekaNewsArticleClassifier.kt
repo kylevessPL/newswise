@@ -2,6 +2,8 @@ package pl.piasta.newswise.classification.weka
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import org.springframework.context.annotation.Lazy
 import pl.piasta.newswise.classification.DocumentCategory
@@ -16,6 +18,7 @@ class WekaNewsArticleClassifier(
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : NewsArticleClassifier(textProcessor) {
     private val attributes = WekaHelper.createAttributes(NewsArticleCategory.categories)
+    private val mutex = Mutex()
 
     override suspend fun predict(text: String): Map<DocumentCategory, Double> {
         val probabilities = text.calculateProbabilities()
@@ -26,6 +29,8 @@ class WekaNewsArticleClassifier(
 
     private suspend fun String.calculateProbabilities() = withContext(dispatcher) {
         val instance = WekaHelper.createPreditionInstance(this@calculateProbabilities, attributes)
-        classifier.distributionForInstance(instance)
+        mutex.withLock {
+            classifier.distributionForInstance(instance)
+        }
     }
 }
