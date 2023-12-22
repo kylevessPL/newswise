@@ -8,6 +8,7 @@ import opennlp.dl.doccat.DocumentCategorizerDL
 import opennlp.tools.doccat.DocumentCategorizer
 import opennlp.tools.doccat.DocumentCategorizerME
 import opennlp.tools.tokenize.TokenizerME
+import opennlp.tools.tokenize.TokenizerModel
 import org.springframework.context.annotation.Lazy
 import pl.piasta.newswise.classification.DocumentCategory
 import pl.piasta.newswise.classification.NewsArticleClassifier
@@ -41,11 +42,14 @@ class OpenNLPBERTNewsArticleClassifier(
 }
 
 class OpenNLPMENewsArticleClassifier(
-    @Lazy private val tokenizer: TokenizerME,
+    @Lazy private val tokenizerModel: TokenizerModel,
     @Lazy categorizer: DocumentCategorizerME,
     textProcessor: TextProcessor,
     dispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : OpenNLPNewsArticleClassifier(textProcessor, dispatcher, categorizer) {
+    private val tokenizer: TokenizerME
+        get() = TokenizerME(tokenizerModel)
+
     override suspend fun tokenize(text: String): Array<String> = withContext(dispatcher) {
         tokenizer.tokenize(text)
     }

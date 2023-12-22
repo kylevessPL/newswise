@@ -6,7 +6,9 @@ import edu.stanford.nlp.stats.Counter
 import io.github.pepperkit.corenlp.stopwords.StopWordsAnnotator
 import opennlp.dl.doccat.DocumentCategorizerDL
 import opennlp.tools.doccat.DocumentCategorizerME
-import opennlp.tools.tokenize.TokenizerME
+import opennlp.tools.tokenize.TokenizerModel
+import opennlp.tools.util.DownloadUtil
+import opennlp.tools.util.DownloadUtil.ModelType.TOKENIZER
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.support.beans
 import org.springframework.core.io.ResourceLoader
@@ -68,7 +70,9 @@ val classificationConfig = beans {
         )
         StanfordCoreNLP(nlpProperties.toStringProperties())
     }
-    bean<TokenizerME>(isLazyInit = true) { TokenizerME("en") }
+    bean<TokenizerModel>(isLazyInit = true) {
+        DownloadUtil.downloadModel("en", TOKENIZER, TokenizerModel::class.java)
+    }
     bean<DocumentCategorizerDL>(isLazyInit = true) {
         val properties = ref<ClassificationProperties>().openNLP.dl
         val model = ref<ResourceLoader>().file(properties.model)!!
