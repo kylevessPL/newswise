@@ -41,7 +41,7 @@ class DocumentProcessingHandler(private val documentProcessor: DocumentProcessor
     }
 
     suspend fun handleRemoteDocumentProcessing(request: ServerRequest) = request.validateAndAwait {
-        val url = request.queryParamOrNull(QUERY_URL).validateUrlAndGet()
+        val url = request.queryParamOrNull(QUERY_URL)!!.validateUrlAndGet()
         val result = coroutineScope {
             async { model.process(url) }
         }
