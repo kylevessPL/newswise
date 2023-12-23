@@ -46,7 +46,7 @@ export class ProcessingService {
 
     private processFileEvents = (model: ModelEnum, data: FormData): Observable<DocumentProcessingData> => defer(() => {
         const results = new Subject<DocumentProcessingData>();
-        let controller = new AbortController();
+        const controller = new AbortController();
         fetchEventSource(`${environment.apiUrl}/${restUrl.processing}/${model}/${restUrl.files}`, {
             method: 'POST',
             body: data,
