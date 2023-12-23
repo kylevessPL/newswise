@@ -4,7 +4,7 @@ import kotlinx.coroutines.coroutineScope
 import pl.piasta.newswise.classification.processing.TextProcessor
 import pl.piasta.newswise.common.percentageDistribution
 
-interface DocumentClassifier {
+fun interface DocumentClassifier {
     suspend fun classify(text: String): Map<DocumentCategory, Int>
 }
 
