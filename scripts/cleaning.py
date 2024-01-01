@@ -16,7 +16,7 @@ def full_cleanup(content):
     fixed = fix(content.lower())
     fixed = __remove_accents(fixed)
     fixed = __remove_url(fixed)
-    fixed = __remove_alphanumerics(fixed)
+    fixed = __remove_digits(fixed)
     fixed = __remove_repeated_characters(fixed)
     fixed = __lemmatize_sentence(fixed)
     fixed = clean(fixed, clean_all=False, extra_spaces=True, stopwords=True, numbers=True, lowercase=True, punct=True)
@@ -72,7 +72,7 @@ def __remove_repeated_characters(text):
     return clean_text
 
 
-def __remove_alphanumerics(text):
+def __remove_digits(text):
     txt = []
     for each in text.split():
         if not any(x in each.lower() for x in '0123456789'):

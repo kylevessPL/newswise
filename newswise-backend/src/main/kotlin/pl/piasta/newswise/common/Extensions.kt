@@ -114,7 +114,7 @@ fun String.removeUrls(): String {
  *
  * @return A new string with words containing numeric characters removed.
  */
-fun String.removeAlphanumerics() = split(" ")
+fun String.removeDigits() = split(" ")
     .filter { !it.any { ch -> ch.isDigit() } }
     .joinToString(" ")
 

@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Lazy
 import pl.piasta.newswise.common.isStopWord
 import pl.piasta.newswise.common.normalize
 import pl.piasta.newswise.common.removeAllWhitespaces
-import pl.piasta.newswise.common.removeAlphanumerics
+import pl.piasta.newswise.common.removeDigits
 import pl.piasta.newswise.common.removeNonLetters
 import pl.piasta.newswise.common.removeRepeatedCharacters
 import pl.piasta.newswise.common.removeSingleCharacterWords
@@ -40,7 +40,7 @@ class CoreNLPTextProcessor(
     private fun String.preprocessText() = removeUrls()
         .lowercase()
         .normalize()
-        .removeAlphanumerics()
+        .removeDigits()
         .removeRepeatedCharacters()
         .removeSingleCharacterWords()
         .trim()
