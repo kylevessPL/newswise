@@ -23,7 +23,7 @@ class EnglishContractionsExpander(private val dispatcher: CoroutineDispatcher = 
                 else -> contractionFor(tokens[i], tokens[i + 1], tags[i + 1])
             }
             newTokens += contraction.drop(1)
-            i += contraction.first().toInt().takeIf { it != 0 } ?: 1
+            i += contraction.first().toInt()
         }
         newTokens.joinToString(" ")
     }
@@ -41,7 +41,7 @@ class EnglishContractionsExpander(private val dispatcher: CoroutineDispatcher = 
         word.equalsIgnoreCase("'twas") -> arrayOf("1", "it", "was")
         word.equalsIgnoreCase("'d") -> arrayOf("1", "would")
         word.equalsIgnoreCase("n't") -> arrayOf("1", "not")
-        else -> arrayOf("0", word)
+        else -> arrayOf("1", word)
     }
 
     private fun contractionFor(word: String, nextWord: String, nextPos: String) = when {
@@ -73,6 +73,6 @@ class EnglishContractionsExpander(private val dispatcher: CoroutineDispatcher = 
         word.equalsIgnoreCase("ca") and nextWord.equalsIgnoreCase("n't") -> arrayOf("2", "can", "not")
         word.equalsIgnoreCase("wo") and nextWord.equalsIgnoreCase("n't") -> arrayOf("2", "will", "not")
         word.equalsIgnoreCase("n't") -> arrayOf("1", "not")
-        else -> arrayOf("0", word)
+        else -> arrayOf("1", word)
     }
 }

@@ -22,7 +22,7 @@ interface TextProcessor {
 }
 
 class CoreNLPTextProcessor(
-    @Lazy private val coreNLP: StanfordCoreNLP,
+    private val coreNLP: StanfordCoreNLP,
     private val contractionsExpander: ContractionsExpander,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : TextProcessor {
