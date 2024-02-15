@@ -10,11 +10,7 @@ INFO Average accuracy/micro-averaged F1: 0.76103
 INFO Average accuracy/micro-averaged F1: 0.76135
 INFO Average accuracy/micro-averaged F1: 0.76078
 INFO Average accuracy/micro-averaged F1: 0.76105
-INFO Average accuracy/micro-averaged F1: 0.76081
-INFO Average accuracy/micro-averaged F1: 0.75410
-INFO Average accuracy/micro-averaged F1: 0.75421
 INFO Average accuracy/micro-averaged F1: 0.78459
-INFO Average accuracy/micro-averaged F1: 0.76557
 INFO Average accuracy/micro-averaged F1: 0.80180
 INFO Average accuracy/micro-averaged F1: 0.79731
 INFO Average accuracy/micro-averaged F1: 0.80816
@@ -23,8 +19,6 @@ INFO Average accuracy/micro-averaged F1: 0.81768
 INFO Average accuracy/micro-averaged F1: 0.80940
 INFO Average accuracy/micro-averaged F1: 0.77763
 INFO Average accuracy/micro-averaged F1: 0.84025
-INFO Average accuracy/micro-averaged F1: 0.86428
-INFO Average accuracy/micro-averaged F1: 0.88285
 INFO Average accuracy/micro-averaged F1: 0.88477
 """
 

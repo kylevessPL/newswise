@@ -4,16 +4,15 @@ from matplotlib import pyplot as plt
 
 data = """
                     precision    recall  f1-score   support
-
-    World&Politics       0.88      0.91      0.90     43988
-Entertainment&Arts       0.89      0.87      0.88     43988
-         Lifestyle       0.87      0.85      0.86     43988
-     Sports&Health       0.88      0.88      0.88     43988
-  Society&Religion       0.94      0.93      0.93     43988
-       Travel&Food       0.94      0.94      0.94     43988
-    Business&Money       0.92      0.93      0.93     43988
- SciTech&Education       0.90      0.90      0.90     43988
-       Crime&Legal       0.94      0.94      0.94     43988
+    World&Politics       0.89      0.91      0.90     43988
+Entertainment&Arts       0.90      0.88      0.89     43988
+         Lifestyle       0.87      0.86      0.86     43988
+     Sports&Health       0.90      0.91      0.90     43988
+  Society&Religion       0.94      0.94      0.94     43988
+       Travel&Food       0.95      0.95      0.95     43988
+    Business&Money       0.94      0.94      0.94     43988
+ SciTech&Education       0.91      0.92      0.92     43988
+       Crime&Legal       0.95      0.95      0.95     43988
 """
 
 # Extracting labels and F1 scores from sklearn classification report
@@ -23,7 +22,7 @@ lines = [line for line in lines if line.strip()]
 labels = []
 f1_scores = []
 
-for line in lines[2:]:  # Skip the header line
+for line in lines[1:]:  # Skip the header line
     parts = re.split(r'\s+', line.strip())
     labels.append(parts[0])
     f1_scores.append(float(parts[-2]))

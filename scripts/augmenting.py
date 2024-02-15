@@ -1,20 +1,21 @@
 import sys
 from json import dumps
-# noinspection PyPackageRequirements
-from nlpaug.augmenter.word import SynonymAug, AntonymAug
-# noinspection PyPackageRequirements
+from nlpaug.augmenter.sentence import ContextualWordEmbsForSentenceAug
+from nlpaug.augmenter.word import SynonymAug, AntonymAug, BackTranslationAug
 from nlpaug.flow import Sequential
 
 from cleaning import full_cleanup, basic_cleanup
 
-# noinspection PyTypeChecker
+
 aug = Sequential([
-    SynonymAug(aug_src='wordnet', aug_max=None, aug_p=100),
-    AntonymAug(aug_max=None, aug_p=100)
+    SynonymAug(aug_src='ppdb', model_path='ppdb-2.0-s-all', aug_max=None, aug_p=100),
+    AntonymAug(aug_max=None, aug_p=100),
+    BackTranslationAug(from_model_name='Helsinki-NLP/opus-mt-en-jap', to_model_name='Helsinki-NLP/opus-mt-jap-en',
+                       max_length=512, device='gpu'),
+    ContextualWordEmbsForSentenceAug(model_path='distilgpt2', model_type='gpt2', max_length=512, device='gpu'),
 ])
 
 
-# noinspection PyBroadException
 def augment(text, number):
     try:
         augmented = aug.augment(text, number)

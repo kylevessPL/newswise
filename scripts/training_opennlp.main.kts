@@ -34,10 +34,12 @@ import opennlp.tools.doccat.DoccatCrossValidator
 import opennlp.tools.doccat.DoccatFactory
 import opennlp.tools.doccat.DocumentCategorizerME
 import opennlp.tools.doccat.DocumentSample
+import opennlp.tools.doccat.DocumentSampleStream
 import opennlp.tools.doccat.FeatureGenerator
 import opennlp.tools.doccat.NGramFeatureGenerator
 import opennlp.tools.ml.naivebayes.NaiveBayesTrainer.NAIVE_BAYES_VALUE
 import opennlp.tools.tokenize.TokenizerME
+import opennlp.tools.util.DownloadUtil
 import opennlp.tools.util.FilterObjectStream
 import opennlp.tools.util.MarkableFileInputStreamFactory
 import opennlp.tools.util.PlainTextByLineStream
@@ -94,7 +96,7 @@ fun String.tokenize(): Array<String> = tokenizer.tokenize(this)
 fun String.halve() = split(" ", limit = 2).takeIf { it.size == 2 }?.let { it[0] to it[1] }
 
 fun train() = PlainTextByLineStream(dataIn, UTF_8).use {
-    object : FilterObjectStream<String, DocumentSample>(it) {
+    object : DocumentSampleStream(it) {
         override fun read() = samples.read()?.let { sample ->
             sample.trim().halve()?.let { (category, text) ->
                 val tokens = text.tokenize()
